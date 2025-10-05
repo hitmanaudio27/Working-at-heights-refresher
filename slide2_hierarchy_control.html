@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBTA Working at Heights - Hierarchy of Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            cursor: none;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .right-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .right-panel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #E0E0E0;
+            margin-bottom: 0.5rem;
+        }
+
+        .document-ref {
+            font-size: 1.2rem;
+            color: #B0B0B0;
+            font-style: italic;
+        }
+
+        #pyramid-container {
+            width: 100%;
+            height: 70vh;
+            position: relative;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pyramid-title {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.8rem;
+            font-weight: bold;
+            z-index: 10;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .level-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 1rem;
+            z-index: 10;
+            border: 2px solid #FFD700;
+            display: none;
+        }
+
+        .level-title {
+            font-size: 1.4rem;
+            color: #FFD700;
+            margin-bottom: 0.5rem;
+        }
+
+        .level-description {
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        .content-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #FFD700;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #FFD700;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-content {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: #E0E0E0;
+        }
+
+        .hierarchy-summary {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .level-item {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .level-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(10px);
+        }
+
+        .level-1 { border-left-color: #FF4444; }
+        .level-2 { border-left-color: #FF8800; }
+        .level-3 { border-left-color: #FFDD00; }
+        .level-4 { border-left-color: #88FF88; }
+        .level-5 { border-left-color: #4488FF; }
+
+        .level-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-right: 1rem;
+            min-width: 60px;
+        }
+
+        .level-content h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .level-content p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .popup {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.95);
+            border: 3px solid #FFD700;
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 500px;
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .popup-title {
+            font-size: 1.8rem;
+            color: #FFD700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .popup-content {
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .examples-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+
+        .examples-list li {
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0.5rem 0;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border-left: 3px solid #FFD700;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #FFD700;
+            font-size: 2rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .touch-indicator {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 4px solid #FFD700;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1001;
+            display: none;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.6; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            color: #B0B0B0;
+            text-align: center;
+        }
+
+        .effectiveness-indicator {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 1.2rem;
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        /* Touch-friendly sizing for immersive projection */
+        @media (min-width: 1920px) {
+            .main-title { font-size: 4.5rem; }
+            .subtitle { font-size: 2.2rem; }
+            .section-title { font-size: 2.5rem; }
+            .section-content { font-size: 1.6rem; }
+            .level-item { padding: 1.5rem; }
+            .level-number { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="header">
+                <h1 class="main-title">Hierarchy of Control</h1>
+                <h2 class="subtitle">Interactive 3D Pyramid</h2>
+                <p class="document-ref">EBTA Prevention-First Approach</p>
+            </div>
+            
+            <div id="pyramid-container">
+                <div class="pyramid-title">Touch Each Level for Examples</div>
+                <div class="effectiveness-indicator">
+                    HIGHEST PROTECTION ↑<br><br>
+                    ↓ LOWEST PROTECTION
+                </div>
+                <div class="level-info" id="level-info">
+                    <div class="level-title" id="info-title"></div>
+                    <div class="level-description" id="info-description"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="content-section">
+                <h3 class="section-title">EBTA Hierarchy of Controls</h3>
+                <div class="hierarchy-summary">
+                    <div class="level-item level-1">
+                        <div class="level-number" style="color: #FF4444;">1</div>
+                        <div class="level-content">
+                            <h4>Elimination</h4>
+                            <p>Design work to eliminate height requirements</p>
+                        </div>
+                    </div>
+                    <div class="level-item level-2">
+                        <div class="level-number" style="color: #FF8800;">2</div>
+                        <div class="level-content">
+                            <h4>Substitution</h4>
+                            <p>Replace fall restraint with positioning systems</p>
+                        </div>
+                    </div>
+                    <div class="level-item level-3">
+                        <div class="level-number" style="color: #FFDD00;">3</div>
+                        <div class="level-content">
+                            <h4>Isolation</h4>
+                            <p>Install proprietary edge protection systems</p>
+                        </div>
+                    </div>
+                    <div class="level-item level-4">
+                        <div class="level-number" style="color: #88FF88;">4</div>
+                        <div class="level-content">
+                            <h4>Engineering</h4>
+                            <p>Use MEWPs or scaffold systems</p>
+                        </div>
+                    </div>
+                    <div class="level-item level-5">
+                        <div class="level-number" style="color: #4488FF;">5</div>
+                        <div class="level-content">
+                            <h4>Administrative/PPE</h4>
+                            <p>Permits and personal protection</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">Key Principles</h3>
+                <div class="section-content">
+                    EBTA assesses and implements the highest reasonably practicable control measure, starting from Level 1, before considering any lower-level options. Administrative controls and PPE should not be relied upon as the primary means to control working at heights risks.
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">Compliance Standards</h3>
+                <div class="section-content">
+                    Aligns with WorkSafe Victoria Compliance Code: Prevention of Falls in General Construction, Victorian WHS regulations, and LORA HSEMS Primary Standards for Working at Heights.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup" id="popup">
+        <button class="close-btn" onclick="closePopup()">&times;</button>
+        <div class="popup-title" id="popup-title"></div>
+        <div class="popup-content" id="popup-content"></div>
+    </div>
+
+    <div class="touch-indicator" id="touch-indicator"></div>
+
+    <div class="footer">
+        Touch any pyramid level to view real-world examples | EBTA Working at Heights Training
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Three.js setup
+        let scene, camera, renderer, pyramidLevels = [];
+        let raycaster, mouse;
+        let isTouch = false;
+
+        // Hierarchy data with EBTA-specific examples
+        const hierarchyData = [
+            {
+                level: 1,
+                title: "Level 1: Elimination",
+                color: 0xFF4444,
+                description: "Design work to eliminate height requirements - Most Effective Control",
+                examples: [
+                    "Prefabricate bridge components at ground level then lift into position",
+                    "Design permanent guardrails and edge protection during construction phase",
+                    "Use precast concrete elements to eliminate formwork at height",
+                    "Plan utility installations at ground level before structure erection",
+                    "Design access routes that avoid working above 2 metres"
+                ]
+            },
+            {
+                level: 2,
+                title: "Level 2: Substitution", 
+                color: 0xFF8800,
+                description: "Replace fall restraint/arrest systems with positioning systems",
+                examples: [
+                    "Use travel restraint systems instead of fall arrest systems",
+                    "Substitute rope access techniques for traditional scaffolding",
+                    "Replace portable ladders with permanent access stairs",
+                    "Use positioning belts instead of full body harnesses where appropriate",
+                    "Implement work positioning systems for bridge maintenance"
+                ]
+            },
+            {
+                level: 3,
+                title: "Level 3: Isolation",
+                color: 0xFFDD00,
+                description: "Install proprietary edge protection systems and barriers",
+                examples: [
+                    "Install guardrails along bridge beam edges during construction",
+                    "Use perimeter screens and safety mesh around work areas",
+                    "Install temporary edge protection on building structures",
+                    "Create exclusion zones around penetrations and openings",
+                    "Use safety covers over holes, pits and excavations"
+                ]
+            },
+            {
+                level: 4,
+                title: "Level 4: Engineering",
+                color: 0x88FF88,
+                description: "Use MEWPs, scaffolds and engineered access systems",
+                examples: [
+                    "Deploy Mobile Elevating Work Platforms (MEWPs) for access",
+                    "Erect scaffolding systems with proper edge protection",
+                    "Use crane-operated work boxes for specific tasks",
+                    "Install temporary work platforms with guardrails",
+                    "Implement catch platforms and safety nets below work areas"
+                ]
+            },
+            {
+                level: 5,
+                title: "Level 5: Administrative/PPE",
+                color: 0x4488FF,
+                description: "Permits, training and personal protective equipment - Least Effective",
+                examples: [
+                    "Issue Working at Height permits with specific conditions",
+                    "Provide fall arrest harnesses and retractable lanyards",
+                    "Implement competency verification for height work",
+                    "Conduct toolbox talks and safety briefings",
+                    "Use personal fall protection equipment as last resort only"
+                ]
+            }
+        ];
+
+        function init() {
+            const container = document.getElementById('pyramid-container');
+            
+            // Scene setup
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setClearColor(0x000000, 0);
+            container.appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.7);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
+            directionalLight.position.set(10, 10, 5);
+            scene.add(directionalLight);
+
+            const pointLight = new THREE.PointLight(0xffffff, 0.5);
+            pointLight.position.set(0, 5, 5);
+            scene.add(pointLight);
+
+            // Create pyramid
+            createPyramid();
+
+            // Camera position
+            camera.position.set(0, 3, 8);
+            camera.lookAt(0, 0, 0);
+
+            // Raycaster for interaction
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            // Event listeners
+            renderer.domElement.addEventListener('click', onMouseClick, false);
+            renderer.domElement.addEventListener('touchstart', onTouchStart, false);
+            renderer.domElement.addEventListener('mousemove', onMouseMove, false);
+            
+            // Start animation
+            animate();
+        }
+
+        function createPyramid() {
+            const baseWidth = 4;
+            const levelHeight = 0.8;
+            const totalHeight = hierarchyData.length * levelHeight;
+
+            hierarchyData.forEach((data, index) => {
+                // Traditional pyramid: narrow at top, wide at bottom
+                // But assign Level 1 (red) to top, Level 5 (blue) to bottom
+                const levelIndex = hierarchyData.length - 1 - index; // For pyramid width calculation
+                const width = baseWidth * (levelIndex + 1) / hierarchyData.length;
+                const height = levelHeight;
+                const y = (index * levelHeight) - (totalHeight / 2) + (height / 2);
+                
+                // Find the correct hierarchy data for this position
+                // Reverse the level assignment: top of pyramid = Level 1, bottom = Level 5
+                const hierarchyLevel = hierarchyData.find(h => h.level === (hierarchyData.length - index));
+
+                // Create level geometry
+                const geometry = new THREE.BoxGeometry(width, height, width);
+                const material = new THREE.MeshLambertMaterial({ 
+                    color: hierarchyLevel.color,
+                    transparent: true,
+                    opacity: 0.8
+                });
+
+                const level = new THREE.Mesh(geometry, material);
+                level.position.set(0, y, 0);
+                level.userData = hierarchyLevel;
+
+                // Add level number text
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = 128;
+                canvas.height = 128;
+                context.fillStyle = 'white';
+                context.font = 'bold 48px Arial';
+                context.textAlign = 'center';
+                context.fillText(hierarchyLevel.level.toString(), 64, 80);
+                
+                const texture = new THREE.CanvasTexture(canvas);
+                const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+                const sprite = new THREE.Sprite(spriteMaterial);
+                sprite.position.set(0, y, width/2 + 0.1);
+                sprite.scale.set(0.8, 0.8, 0.8);
+
+                scene.add(level);
+                scene.add(sprite);
+                pyramidLevels.push(level);
+            });
+        }
+
+        function onMouseMove(event) {
+            if (isTouch) return;
+            
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(pyramidLevels);
+
+            // Reset all levels
+            pyramidLevels.forEach(level => {
+                level.material.emissive.setHex(0x000000);
+                level.scale.set(1, 1, 1);
+            });
+
+            if (intersects.length > 0) {
+                const hoveredLevel = intersects[0].object;
+                hoveredLevel.material.emissive.setHex(0x333333);
+                hoveredLevel.scale.set(1.05, 1.05, 1.05);
+                renderer.domElement.style.cursor = 'pointer';
+                
+                // Show level info
+                showLevelInfo(hoveredLevel.userData);
+            } else {
+                renderer.domElement.style.cursor = 'default';
+                hideLevelInfo();
+            }
+        }
+
+        function onMouseClick(event) {
+            handleInteraction(event);
+        }
+
+        function onTouchStart(event) {
+            isTouch = true;
+            event.preventDefault();
+            
+            const touch = event.touches[0];
+            const touchIndicator = document.getElementById('touch-indicator');
+            touchIndicator.style.left = (touch.clientX - 40) + 'px';
+            touchIndicator.style.top = (touch.clientY - 40) + 'px';
+            touchIndicator.style.display = 'block';
+            
+            setTimeout(() => {
+                touchIndicator.style.display = 'none';
+            }, 800);
+            
+            handleInteraction(touch);
+        }
+
+        function handleInteraction(event) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            const clientX = event.clientX || event.touches[0].clientX;
+            const clientY = event.clientY || event.touches[0].clientY;
+            
+            mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(pyramidLevels);
+
+            if (intersects.length > 0) {
+                const clickedLevel = intersects[0].object;
+                showPopup(clickedLevel.userData, clientX, clientY);
+            }
+        }
+
+        function showLevelInfo(data) {
+            const levelInfo = document.getElementById('level-info');
+            const title = document.getElementById('info-title');
+            const description = document.getElementById('info-description');
+
+            title.textContent = data.title;
+            description.textContent = data.description;
+            levelInfo.style.display = 'block';
+        }
+
+        function hideLevelInfo() {
+            document.getElementById('level-info').style.display = 'none';
+        }
+
+        function showPopup(data, x, y) {
+            const popup = document.getElementById('popup');
+            const title = document.getElementById('popup-title');
+            const content = document.getElementById('popup-content');
+
+            title.textContent = data.title;
+            
+            let examplesHtml = `<p><strong>${data.description}</strong></p>`;
+            examplesHtml += '<ul class="examples-list">';
+            data.examples.forEach(example => {
+                examplesHtml += `<li>${example}</li>`;
+            });
+            examplesHtml += '</ul>';
+            
+            content.innerHTML = examplesHtml;
+
+            popup.style.left = Math.min(x, window.innerWidth - 520) + 'px';
+            popup.style.top = Math.min(y, window.innerHeight - 300) + 'px';
+            popup.style.display = 'block';
+
+            // Auto-close after 10 seconds for touch interfaces
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 10000);
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Gentle rotation animation
+            scene.rotation.y += 0.003;
+            
+            // Subtle floating animation for pyramid levels
+            pyramidLevels.forEach((level, index) => {
+                level.position.y += Math.sin(Date.now() * 0.001 + index) * 0.002;
+            });
+            
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const container = document.getElementById('pyramid-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        // Initialize when page loads
+        window.addEventListener('load', init);
+
+        // Close popup when clicking outside
+        document.addEventListener('click', (event) => {
+            const popup = document.getElementById('popup');
+            if (!popup.contains(event.target) && !renderer.domElement.contains(event.target)) {
+                closePopup();
+            }
+        });
+    </script>
+</body>
+</html>
