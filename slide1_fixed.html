@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBTA Working at Heights - Introduction & Purpose</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            cursor: none;
+        }
+
+        /* Dark overlay for readability */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(15, 20, 25, 0.85) 0%, rgba(26, 35, 50, 0.82) 50%, rgba(45, 55, 72, 0.80) 100%);
+            z-index: -1;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            height: 100vh;
+            gap: 3rem;
+            padding: 3rem;
+        }
+
+        .main-panel {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.15), rgba(255, 215, 0, 0.08));
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            border: 1px solid rgba(34, 139, 34, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-title {
+            font-size: 3.2rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            text-shadow: 3px 3px 12px rgba(0,0,0,0.7);
+            background: linear-gradient(45deg, #228B22, #FFD700, #32CD32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 2rem;
+            color: #E2E8F0;
+            margin-bottom: 1rem;
+            font-weight: 300;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+        }
+
+        .document-ref {
+            font-size: 1.2rem;
+            color: #A0AEC0;
+            font-style: italic;
+            font-weight: 300;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .project-banner {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(34, 139, 34, 0.15));
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 6px 24px rgba(255, 215, 0, 0.2);
+        }
+
+        .project-title {
+            font-size: 1.8rem;
+            color: #FFD700;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+        }
+
+        .project-subtitle {
+            font-size: 1.2rem;
+            color: #E2E8F0;
+            font-weight: 400;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        #chart-container {
+            flex: 1;
+            position: relative;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            box-shadow: inset 0 4px 16px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-title {
+            font-size: 2.2rem;
+            color: #228B22;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 600;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: end;
+            gap: 2rem;
+            height: 300px;
+            margin: 2rem 0;
+        }
+
+        .year-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .year-group:hover {
+            transform: scale(1.05);
+        }
+
+        .bars {
+            display: flex;
+            gap: 0.5rem;
+            align-items: end;
+            margin-bottom: 1rem;
+        }
+
+        .bar {
+            width: 30px;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .bar:hover {
+            transform: scaleY(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .bar-fatalities {
+            background: linear-gradient(to top, #DC143C, #FF6B6B);
+            box-shadow: 0 2px 8px rgba(220, 20, 60, 0.3);
+        }
+
+        .bar-injuries {
+            background: linear-gradient(to top, #FF8C00, #FFB347);
+            box-shadow: 0 2px 8px rgba(255, 140, 0, 0.3);
+        }
+
+        .bar-total {
+            background: linear-gradient(to top, #FFD700, #FFED4E);
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+        }
+
+        .year-label {
+            font-size: 1.2rem;
+            color: #E2E8F0;
+            font-weight: 600;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .legend {
+            display: flex;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .legend-text {
+            font-size: 1.1rem;
+            color: #E2E8F0;
+            font-weight: 500;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .sidebar-title {
+            font-size: 2.4rem;
+            color: #228B22;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 2px solid rgba(34, 139, 34, 0.3);
+            padding-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .hierarchy-info {
+            margin-bottom: 3rem;
+        }
+
+        .hierarchy-item {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            border-left: 4px solid #228B22;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .hierarchy-item:hover {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.15), rgba(34, 139, 34, 0.08));
+            transform: translateX(8px);
+            box-shadow: 0 6px 24px rgba(34, 139, 34, 0.3);
+        }
+
+        .hierarchy-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #228B22;
+            margin-right: 1.5rem;
+            min-width: 60px;
+            text-align: center;
+            background: rgba(34, 139, 34, 0.2);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(34, 139, 34, 0.4);
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .hierarchy-content h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #E2E8F0;
+            font-weight: 600;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .hierarchy-content p {
+            font-size: 1rem;
+            color: #A0AEC0;
+            line-height: 1.5;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
+
+        .prevention-section {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.12), rgba(255, 215, 0, 0.06));
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 2.5rem;
+            border: 1px solid rgba(34, 139, 34, 0.25);
+            box-shadow: 0 6px 24px rgba(34, 139, 34, 0.2);
+        }
+
+        .prevention-title {
+            font-size: 1.6rem;
+            color: #228B22;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .prevention-text {
+            font-size: 1.1rem;
+            color: #E2E8F0;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
+
+        .stats-highlight {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.15), rgba(255, 69, 0, 0.08));
+            border: 1px solid rgba(220, 20, 60, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .stats-highlight h5 {
+            color: #DC143C;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .stats-highlight p {
+            color: #FFB6C1;
+            font-size: 1rem;
+            line-height: 1.4;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(26, 32, 44, 0.95), rgba(45, 55, 72, 0.92));
+            backdrop-filter: blur(25px);
+            border: 2px solid #228B22;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 1000px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+            display: none;
+        }
+
+        .popup-title {
+            font-size: 2.4rem;
+            color: #228B22;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .popup-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-detail {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            padding: 2rem;
+            border-left: 4px solid #228B22;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-detail h4 {
+            color: #228B22;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .stat-detail ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .stat-detail li {
+            margin: 0.8rem 0;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            font-size: 1rem;
+            border-left: 2px solid rgba(34, 139, 34, 0.3);
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #228B22;
+            font-size: 2.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .close-btn:hover {
+            color: #32CD32;
+            transform: scale(1.1);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
+            color: #718096;
+            text-align: center;
+            font-weight: 300;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .project-context {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(34, 139, 34, 0.15));
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: #FFD700;
+            backdrop-filter: blur(10px);
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Touch-friendly sizing for immersive projection */
+        @media (min-width: 1920px) {
+            .main-title { font-size: 4rem; }
+            .subtitle { font-size: 2.6rem; }
+            .chart-title { font-size: 2.8rem; }
+            .sidebar-title { font-size: 2.8rem; }
+            .project-title { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-panel">
+            <div class="header">
+                <div class="project-banner">
+                    <div class="project-title">EBTA Eastern Freeway Big Build</div>
+                    <div class="project-subtitle">$4 Billion Government Infrastructure Project</div>
+                </div>
+                <h1 class="main-title">INTRODUCTION & PURPOSE</h1>
+                <h2 class="subtitle">Working at Heights Safety Training</h2>
+                <p class="document-ref">NEL-STH-NSA-5900-OHS-PRC-0008 Rev 04</p>
+                <div class="project-context">
+                    Live Project Context<br>
+                    Your Workplace
+                </div>
+            </div>
+            
+            <div id="chart-container">
+                <h3 class="chart-title">Australian Fall-from-Height Statistics (2019-2023)</h3>
+                
+                <div class="chart-bars">
+                    <div class="year-group" onclick="showPopup('fatalities', '2019')">
+                        <div class="bars">
+                            <div class="bar bar-fatalities" style="height: 88px;" title="22 fatalities"></div>
+                            <div class="bar bar-injuries" style="height: 120px;" title="1,205 injuries"></div>
+                            <div class="bar bar-total" style="height: 183px;" title="183 total fatalities"></div>
+                        </div>
+                        <div class="year-label">2019</div>
+                    </div>
+                    
+                    <div class="year-group" onclick="showPopup('fatalities', '2020')">
+                        <div class="bars">
+                            <div class="bar bar-fatalities" style="height: 72px;" title="18 fatalities"></div>
+                            <div class="bar bar-injuries" style="height: 109px;" title="1,089 injuries"></div>
+                            <div class="bar bar-total" style="height: 149px;" title="149 total fatalities"></div>
+                        </div>
+                        <div class="year-label">2020</div>
+                    </div>
+                    
+                    <div class="year-group" onclick="showPopup('fatalities', '2021')">
+                        <div class="bars">
+                            <div class="bar bar-fatalities" style="height: 100px;" title="25 fatalities"></div>
+                            <div class="bar bar-injuries" style="height: 116px;" title="1,156 injuries"></div>
+                            <div class="bar bar-total" style="height: 169px;" title="169 total fatalities"></div>
+                        </div>
+                        <div class="year-label">2021</div>
+                    </div>
+                    
+                    <div class="year-group" onclick="showPopup('fatalities', '2022')">
+                        <div class="bars">
+                            <div class="bar bar-fatalities" style="height: 68px;" title="17 fatalities"></div>
+                            <div class="bar bar-injuries" style="height: 130px;" title="1,298 injuries"></div>
+                            <div class="bar bar-total" style="height: 195px;" title="195 total fatalities"></div>
+                        </div>
+                        <div class="year-label">2022</div>
+                    </div>
+                    
+                    <div class="year-group" onclick="showPopup('fatalities', '2023')">
+                        <div class="bars">
+                            <div class="bar bar-fatalities" style="height: 116px;" title="29 fatalities"></div>
+                            <div class="bar bar-injuries" style="height: 135px;" title="1,352 injuries"></div>
+                            <div class="bar bar-total" style="height: 200px;" title="200 total fatalities"></div>
+                        </div>
+                        <div class="year-label">2023</div>
+                    </div>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color bar-fatalities"></div>
+                        <div class="legend-text">Fall Fatalities</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color bar-injuries"></div>
+                        <div class="legend-text">Injury Claims</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color bar-total"></div>
+                        <div class="legend-text">Total Fatalities</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <h3 class="sidebar-title">EBTA Prevention-First Approach</h3>
+            
+            <div class="hierarchy-info">
+                <div class="hierarchy-item">
+                    <div class="hierarchy-number">1</div>
+                    <div class="hierarchy-content">
+                        <h4>Elimination</h4>
+                        <p>Design out height work through prefabrication and permanent solutions</p>
+                    </div>
+                </div>
+                
+                <div class="hierarchy-item">
+                    <div class="hierarchy-number">2</div>
+                    <div class="hierarchy-content">
+                        <h4>Substitution</h4>
+                        <p>Replace high-risk methods with safer alternatives like MEWPs</p>
+                    </div>
+                </div>
+                
+                <div class="hierarchy-item">
+                    <div class="hierarchy-number">3</div>
+                    <div class="hierarchy-content">
+                        <h4>Isolation</h4>
+                        <p>Physical barriers including guardrails and safety screens</p>
+                    </div>
+                </div>
+                
+                <div class="hierarchy-item">
+                    <div class="hierarchy-number">4</div>
+                    <div class="hierarchy-content">
+                        <h4>Engineering</h4>
+                        <p>Scaffolding systems and mechanical work platforms</p>
+                    </div>
+                </div>
+                
+                <div class="hierarchy-item">
+                    <div class="hierarchy-number">5</div>
+                    <div class="hierarchy-content">
+                        <h4>Administrative/PPE</h4>
+                        <p>Training, procedures, and personal protective equipment</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prevention-section">
+                <div class="prevention-title">EBTA Project Context</div>
+                <p class="prevention-text">
+                    The Eastern Freeway Big Build represents one of Victoria's largest infrastructure projects, 
+                    with extensive height work across bridge construction, overhead gantries, and elevated roadways.
+                </p>
+                <div class="stats-highlight">
+                    <h5>Project Scale Impact</h5>
+                    <p>With thousands of workers across multiple construction phases, implementing EBTA's prevention-first 
+                    approach is critical to achieving zero harm outcomes on this major government project.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popup-overlay" onclick="closePopup()"></div>
+    <div class="popup" id="popup">
+        <button class="close-btn" onclick="closePopup()">&times;</button>
+        <div class="popup-title" id="popup-title"></div>
+        <div class="popup-content" id="popup-content"></div>
+    </div>
+
+    <div class="footer">
+        Touch any chart element for detailed statistics | EBTA Eastern Freeway Project Training
+    </div>
+
+    <script>
+        // Chart data
+        const chartData = {
+            years: ['2019', '2020', '2021', '2022', '2023'],
+            fatalities: [22, 18, 25, 17, 29],
+            injuries: [1205, 1089, 1156, 1298, 1352],
+            totalFatalities: [183, 149, 169, 195, 200]
+        };
+
+        const detailedStats = {
+            fatalities: {
+                title: "Fall-from-Height Fatalities - EBTA Project Context",
+                details: [
+                    "29 fatalities in 2023 - highest since 2021",
+                    "71% increase from 2022 (17 fatalities)", 
+                    "Construction industry accounts for 65% of falls",
+                    "Average age of victims: 45 years",
+                    "Most common: falls from roofs (38%) and ladders (24%)",
+                    "EBTA Eastern Freeway: Zero tolerance approach through elimination",
+                    "Project scale: $4B infrastructure requires systematic prevention",
+                    "Bridge construction and elevated work present significant risks"
+                ]
+            },
+            injuries: {
+                title: "Serious Injury Claims - EBTA Prevention Focus",
+                details: [
+                    "1,352 claims in 2023 - highest in 5-year period",
+                    "4.2% increase from 2022 (1,298 claims)",
+                    "Average time off work: 12.3 weeks per claim",
+                    "Total compensation costs: $89.4 million annually",
+                    "Most common injuries: fractures (45%) and head trauma (23%)",
+                    "EBTA approach: Prevention through hierarchy of controls",
+                    "Eastern Freeway project: Extensive MEWP and scaffold systems",
+                    "Safety in Design workshops eliminate height work where possible"
+                ]
+            },
+            totalFatalities: {
+                title: "Total Industry Fatalities - EBTA Leadership",
+                details: [
+                    "200 total workplace fatalities in 2023",
+                    "Falls represent 14.5% of all workplace deaths",
+                    "Construction industry: 52 total fatalities",
+                    "Manufacturing industry: 28 total fatalities",
+                    "Transport & logistics: 31 total fatalities", 
+                    "EBTA commitment: Zero harm through systematic prevention",
+                    "Eastern Freeway: Leading practice in major infrastructure",
+                    "Government project standards require exemplary safety performance"
+                ]
+            }
+        };
+
+        function showPopup(type, year) {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('popup-overlay');
+            const title = document.getElementById('popup-title');
+            const content = document.getElementById('popup-content');
+            
+            const stats = detailedStats[type];
+            title.textContent = stats.title;
+            
+            let contentHtml = '<div class="stat-detail"><h4>Key Statistics & EBTA Context</h4><ul>';
+            stats.details.forEach(detail => {
+                contentHtml += `<li>${detail}</li>`;
+            });
+            contentHtml += '</ul></div>';
+            
+            content.innerHTML = contentHtml;
+            
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+
+            // Auto-close for training flow
+            setTimeout(() => {
+                closePopup();
+            }, 15000);
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        // Auto-highlight bars for demonstration
+        let currentHighlight = 0;
+        const yearGroups = document.querySelectorAll('.year-group');
+        
+        function autoHighlight() {
+            // Remove previous highlight
+            yearGroups.forEach(group => {
+                group.style.transform = 'scale(1)';
+                group.style.filter = 'brightness(1)';
+            });
+            
+            // Highlight current
+            if (yearGroups[currentHighlight]) {
+                yearGroups[currentHighlight].style.transform = 'scale(1.05)';
+                yearGroups[currentHighlight].style.filter = 'brightness(1.2)';
+            }
+            
+            currentHighlight = (currentHighlight + 1) % yearGroups.length;
+        }
+
+        // Start auto-highlight
+        setInterval(autoHighlight, 3000);
+
+        // Keyboard support
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Load and set the EBTA image as background
+        function loadEBTAImage() {
+            const img = new Image();
+            img.onload = function() {
+                document.body.style.backgroundImage = `url('ebta-eastern-freeway.jpg')`;
+            };
+            img.onerror = function() {
+                console.log('EBTA image not found, using fallback');
+                // Keep the current gradient background
+            };
+            img.src = 'ebta-eastern-freeway.jpg';
+        }
+
+        // Load image when page loads
+        window.addEventListener('load', loadEBTAImage);
+    </script>
+</body>
+</html>

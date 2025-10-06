@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBTA Working at Heights - Safety in Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #2d3748 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            cursor: none;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            height: 100vh;
+            gap: 3rem;
+            padding: 3rem;
+        }
+
+        .main-panel {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 160, 0, 0.05));
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .main-title {
+            font-size: 4rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF8C00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #E2E8F0;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .document-ref {
+            font-size: 1.1rem;
+            color: #A0AEC0;
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        #sid-container {
+            flex: 1;
+            position: relative;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            box-shadow: inset 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .sid-workflow {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: space-between;
+        }
+
+        .workflow-phase {
+            background: linear-gradient(135deg, #2D3748, #4A5568);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .workflow-phase::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .workflow-phase:hover::before {
+            left: 100%;
+        }
+
+        .workflow-phase:hover {
+            transform: translateX(10px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(255, 215, 0, 0.2);
+            border-color: rgba(255, 215, 0, 0.4);
+            background: linear-gradient(135deg, #3D4852, #5A6578);
+        }
+
+        .workflow-phase.active {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #1A202C;
+            border-color: #FFD700;
+            box-shadow: 0 16px 48px rgba(255, 215, 0, 0.4);
+            animation: activeGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes activeGlow {
+            0%, 100% { box-shadow: 0 16px 48px rgba(255, 215, 0, 0.4); }
+            50% { box-shadow: 0 20px 60px rgba(255, 215, 0, 0.6); }
+        }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .phase-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-right: 1.5rem;
+            min-width: 80px;
+            opacity: 0.9;
+        }
+
+        .phase-content {
+            flex: 1;
+        }
+
+        .phase-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .phase-description {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        .phase-icon {
+            font-size: 2rem;
+            margin-left: 1rem;
+            opacity: 0.7;
+        }
+
+        .connection-line {
+            width: 4px;
+            height: 40px;
+            background: linear-gradient(to bottom, #FFD700, #FFA500);
+            margin: 0 auto;
+            border-radius: 2px;
+            opacity: 0.6;
+            animation: flowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes flowPulse {
+            0%, 100% { opacity: 0.6; transform: scaleY(1); }
+            50% { opacity: 1; transform: scaleY(1.1); }
+        }
+
+        .sidebar-title {
+            font-size: 2.2rem;
+            color: #FFD700;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 1rem;
+        }
+
+        .sid-principles {
+            margin-bottom: 3rem;
+        }
+
+        .principle-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 12px;
+            border-left: 4px solid #FFD700;
+            transition: all 0.3s ease;
+        }
+
+        .principle-item:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+            transform: translateX(8px);
+        }
+
+        .principle-icon {
+            font-size: 2rem;
+            margin-right: 1.5rem;
+            min-width: 50px;
+            color: #FFD700;
+        }
+
+        .principle-content h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #E2E8F0;
+            font-weight: 600;
+        }
+
+        .principle-content p {
+            font-size: 1rem;
+            color: #A0AEC0;
+            line-height: 1.5;
+        }
+
+        .elimination-examples {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 160, 0, 0.04));
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .examples-title {
+            font-size: 1.4rem;
+            color: #FFD700;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .example-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .example-list li {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            margin: 0.8rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid #FFD700;
+            font-size: 1rem;
+            color: #E2E8F0;
+            transition: all 0.3s ease;
+        }
+
+        .example-list li:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+            transform: translateX(5px);
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1A202C, #2D3748);
+            border: 2px solid #FFD700;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 800px;
+            width: 90%;
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .popup-title {
+            font-size: 2.2rem;
+            color: #FFD700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .popup-description {
+            font-size: 1.3rem;
+            color: #E2E8F0;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .popup-content {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #CBD5E0;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .detail-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #FFD700;
+        }
+
+        .detail-section h4 {
+            color: #FFD700;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .detail-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-section li {
+            margin: 0.5rem 0;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1rem;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #FFD700;
+            font-size: 2.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #FFA500;
+            transform: scale(1.1);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.1rem;
+            color: #718096;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        /* Touch-friendly sizing for immersive projection */
+        @media (min-width: 1920px) {
+            .main-title { font-size: 5rem; }
+            .subtitle { font-size: 2.4rem; }
+            .workflow-phase { padding: 2.5rem; }
+            .phase-number { font-size: 3rem; }
+            .phase-title { font-size: 1.8rem; }
+            .sidebar-title { font-size: 2.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-panel">
+            <div class="header">
+                <h1 class="main-title">SAFETY IN DESIGN</h1>
+                <h2 class="subtitle">Prevention-First Approach</h2>
+                <p class="document-ref">EBTA SiD Process - Major Infrastructure Projects</p>
+            </div>
+            
+            <div id="sid-container">
+                <div class="sid-workflow">
+                    <!-- Phase 1: Project Initiation -->
+                    <div class="workflow-phase" id="phase1">
+                        <div class="phase-header">
+                            <div class="phase-number">01</div>
+                            <div class="phase-content">
+                                <div class="phase-title">Project Initiation & SiD Planning</div>
+                                <div class="phase-description">Establish SiD framework and multidisciplinary team</div>
+                            </div>
+                            <div class="phase-icon">🎯</div>
+                        </div>
+                    </div>
+                    
+                    <div class="connection-line"></div>
+                    
+                    <!-- Phase 2: Design Development -->
+                    <div class="workflow-phase" id="phase2">
+                        <div class="phase-header">
+                            <div class="phase-number">02</div>
+                            <div class="phase-content">
+                                <div class="phase-title">Design Development Workshops</div>
+                                <div class="phase-description">Identify height risks and elimination opportunities</div>
+                            </div>
+                            <div class="phase-icon">🏗️</div>
+                        </div>
+                    </div>
+                    
+                    <div class="connection-line"></div>
+                    
+                    <!-- Phase 3: Risk Elimination -->
+                    <div class="workflow-phase" id="phase3">
+                        <div class="phase-header">
+                            <div class="phase-number">03</div>
+                            <div class="phase-content">
+                                <div class="phase-title">Risk Elimination & Design Optimisation</div>
+                                <div class="phase-description">Implement design changes to eliminate height work</div>
+                            </div>
+                            <div class="phase-icon">⚡</div>
+                        </div>
+                    </div>
+                    
+                    <div class="connection-line"></div>
+                    
+                    <!-- Phase 4: Documentation -->
+                    <div class="workflow-phase" id="phase4">
+                        <div class="phase-header">
+                            <div class="phase-number">04</div>
+                            <div class="phase-content">
+                                <div class="phase-title">Documentation & Risk Transfer</div>
+                                <div class="phase-description">Document remaining risks for construction phase</div>
+                            </div>
+                            <div class="phase-icon">📋</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <h3 class="sidebar-title">SiD Principles</h3>
+            
+            <div class="sid-principles">
+                <div class="principle-item">
+                    <div class="principle-icon">🎯</div>
+                    <div class="principle-content">
+                        <h4>Early Intervention</h4>
+                        <p>Address height risks during design phase when changes are most cost-effective</p>
+                    </div>
+                </div>
+                
+                <div class="principle-item">
+                    <div class="principle-icon">🏗️</div>
+                    <div class="principle-content">
+                        <h4>Multidisciplinary Approach</h4>
+                        <p>Engage designers, engineers, safety professionals, and constructors</p>
+                    </div>
+                </div>
+                
+                <div class="principle-item">
+                    <div class="principle-icon">⚡</div>
+                    <div class="principle-content">
+                        <h4>Elimination Focus</h4>
+                        <p>Prioritise elimination of height work over protective measures</p>
+                    </div>
+                </div>
+                
+                <div class="principle-item">
+                    <div class="principle-icon">📋</div>
+                    <div class="principle-content">
+                        <h4>Systematic Documentation</h4>
+                        <p>Record decisions and transfer remaining risks to construction</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="elimination-examples">
+                <div class="examples-title">Elimination Examples</div>
+                <ul class="example-list">
+                    <li>Prefabricate bridge segments at ground level</li>
+                    <li>Design permanent guardrails during construction</li>
+                    <li>Use precast elements to eliminate formwork</li>
+                    <li>Plan utility installation before structure erection</li>
+                    <li>Design access routes avoiding height work</li>
+                    <li>Implement modular construction techniques</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popup-overlay"></div>
+    <div class="popup" id="popup">
+        <button class="close-btn" onclick="closePopup()">&times;</button>
+        <div class="popup-title" id="popup-title"></div>
+        <div class="popup-description" id="popup-description"></div>
+        <div class="popup-content" id="popup-content"></div>
+    </div>
+
+    <div class="footer">
+        Touch any workflow phase for detailed requirements | EBTA Safety in Design Professional Training
+    </div>
+
+    <script>
+        // Enhanced SiD workflow data for professional presentation
+        const sidPhases = {
+            phase1: {
+                title: "Project Initiation & SiD Planning",
+                description: "Establish comprehensive SiD framework and assemble multidisciplinary team",
+                sections: {
+                    "Team Formation": [
+                        "Appoint SiD coordinator with appropriate competency and authority",
+                        "Engage design team including architects, structural, civil, and services engineers",
+                        "Include safety professionals with construction and height work expertise",
+                        "Involve construction managers and specialist contractors early",
+                        "Establish clear roles, responsibilities, and communication protocols"
+                    ],
+                    "Framework Development": [
+                        "Develop project-specific SiD procedures and methodologies",
+                        "Establish risk assessment criteria and elimination targets",
+                        "Create documentation templates and review processes",
+                        "Define workshop schedules aligned with design milestones",
+                        "Set up tracking systems for SiD decisions and outcomes"
+                    ],
+                    "Regulatory Alignment": [
+                        "Review applicable codes, standards, and regulatory requirements",
+                        "Align with WorkSafe Victoria and Safe Work Australia guidance",
+                        "Consider client-specific safety requirements and standards",
+                        "Establish compliance verification and audit processes"
+                    ]
+                }
+            },
+            phase2: {
+                title: "Design Development Workshops",
+                description: "Systematic identification of height risks and exploration of elimination opportunities",
+                sections: {
+                    "Workshop Planning": [
+                        "Schedule workshops at key design development milestones",
+                        "Prepare comprehensive design documentation and 3D models",
+                        "Develop structured agenda focusing on height work identification",
+                        "Ensure all relevant disciplines and stakeholders participate",
+                        "Establish clear objectives and success criteria for each session"
+                    ],
+                    "Risk Identification": [
+                        "Systematically review all construction sequences and methodologies",
+                        "Identify height work requirements above 2 metres",
+                        "Assess fall distances, potential consequences, and injury severity",
+                        "Consider maintenance and operational height work requirements",
+                        "Evaluate temporary works and construction access needs"
+                    ],
+                    "Opportunity Assessment": [
+                        "Explore prefabrication and modular construction opportunities",
+                        "Assess potential for permanent edge protection integration",
+                        "Consider alternative construction sequences and methodologies",
+                        "Evaluate ground-level assembly and lifting strategies",
+                        "Identify opportunities for improved access design"
+                    ]
+                }
+            },
+            phase3: {
+                title: "Risk Elimination & Design Optimisation",
+                description: "Implementation of design changes to eliminate or minimise height work requirements",
+                sections: {
+                    "Design Modifications": [
+                        "Implement prefabrication strategies for major structural elements",
+                        "Integrate permanent guardrails and edge protection systems",
+                        "Optimise structural design to facilitate safe construction access",
+                        "Modify building services routing to minimise height work",
+                        "Design temporary works integration points and lifting strategies"
+                    ],
+                    "Construction Methodology": [
+                        "Develop construction sequences that minimise height exposure",
+                        "Plan ground-level assembly and modular installation approaches",
+                        "Design safe access routes and working platforms",
+                        "Integrate crane and lifting equipment requirements",
+                        "Consider weather protection and environmental factors"
+                    ],
+                    "Validation Process": [
+                        "Conduct constructability reviews with experienced contractors",
+                        "Validate design changes through 3D modelling and simulation",
+                        "Assess cost implications and value engineering opportunities",
+                        "Confirm compliance with structural and performance requirements",
+                        "Document design decisions and rationale comprehensively"
+                    ]
+                }
+            },
+            phase4: {
+                title: "Documentation & Risk Transfer",
+                description: "Comprehensive documentation of SiD outcomes and transfer of remaining risks",
+                sections: {
+                    "SiD Documentation": [
+                        "Prepare comprehensive SiD report documenting all decisions",
+                        "Create detailed drawings showing permanent safety features",
+                        "Document construction methodologies and sequence requirements",
+                        "Provide specifications for safety-critical design elements",
+                        "Include maintenance and operational safety considerations"
+                    ],
+                    "Risk Transfer": [
+                        "Identify and document all remaining height work requirements",
+                        "Transfer residual risks to Package Risk Assessment process",
+                        "Provide detailed risk information for WPRA development",
+                        "Specify required competencies and specialist contractor involvement",
+                        "Establish monitoring and review requirements for construction phase"
+                    ],
+                    "Continuous Improvement": [
+                        "Capture lessons learned and best practices from SiD process",
+                        "Update SiD procedures and templates based on project experience",
+                        "Share knowledge across project teams and organisation",
+                        "Establish feedback mechanisms from construction teams",
+                        "Contribute to industry knowledge and standard development"
+                    ]
+                }
+            }
+        };
+
+        let currentPhase = null;
+        let animationInterval = null;
+
+        function init() {
+            // Add event listeners to all workflow phases
+            document.querySelectorAll('.workflow-phase').forEach(phase => {
+                phase.addEventListener('click', handlePhaseClick);
+                phase.addEventListener('touchstart', handleTouchStart);
+            });
+
+            // Add overlay click listener
+            document.getElementById('popup-overlay').addEventListener('click', closePopup);
+
+            // Start professional animation sequence
+            startAnimationSequence();
+        }
+
+        function handlePhaseClick(event) {
+            const phaseId = event.currentTarget.id;
+            showPopup(phaseId);
+            highlightPhase(phaseId);
+        }
+
+        function handleTouchStart(event) {
+            event.preventDefault();
+            const phaseId = event.currentTarget.id;
+            showPopup(phaseId);
+            highlightPhase(phaseId);
+        }
+
+        function highlightPhase(phaseId) {
+            // Remove active class from all phases
+            document.querySelectorAll('.workflow-phase').forEach(phase => {
+                phase.classList.remove('active');
+            });
+            
+            // Add active class to selected phase
+            document.getElementById(phaseId).classList.add('active');
+            currentPhase = phaseId;
+        }
+
+        function showPopup(phaseId) {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('popup-overlay');
+            const title = document.getElementById('popup-title');
+            const description = document.getElementById('popup-description');
+            const content = document.getElementById('popup-content');
+            const phaseData = sidPhases[phaseId];
+
+            title.textContent = phaseData.title;
+            description.textContent = phaseData.description;
+            
+            let sectionsHtml = '<div class="details-grid">';
+            Object.entries(phaseData.sections).forEach(([sectionTitle, items]) => {
+                sectionsHtml += `
+                    <div class="detail-section">
+                        <h4>${sectionTitle}</h4>
+                        <ul>
+                            ${items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+            sectionsHtml += '</div>';
+            
+            content.innerHTML = sectionsHtml;
+
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+
+            // Auto-close after 18 seconds for professional presentation
+            setTimeout(() => {
+                closePopup();
+            }, 18000);
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+            
+            // Remove active class from current phase
+            if (currentPhase) {
+                document.getElementById(currentPhase).classList.remove('active');
+                currentPhase = null;
+            }
+        }
+
+        function startAnimationSequence() {
+            let phaseIndex = 1;
+            
+            animationInterval = setInterval(() => {
+                // Remove active class from all phases
+                document.querySelectorAll('.workflow-phase').forEach(phase => {
+                    phase.classList.remove('active');
+                });
+                
+                // Add active class to current phase
+                const currentPhaseElement = document.getElementById(`phase${phaseIndex}`);
+                if (currentPhaseElement) {
+                    currentPhaseElement.classList.add('active');
+                }
+                
+                phaseIndex++;
+                if (phaseIndex > 4) {
+                    phaseIndex = 1;
+                }
+            }, 4000); // Professional timing for SiD workflow
+        }
+
+        // Keyboard support for accessibility
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Initialize when page loads
+        window.addEventListener('load', init);
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+            }
+        });
+    </script>
+</body>
+</html>

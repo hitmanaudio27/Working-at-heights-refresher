@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBTA Working at Heights - PPE, Competency & Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #2d3748 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            cursor: none;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            height: 100vh;
+            gap: 3rem;
+            padding: 3rem;
+        }
+
+        .main-panel {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.1), rgba(255, 215, 0, 0.05));
+            border-radius: 15px;
+            border: 1px solid rgba(34, 139, 34, 0.2);
+        }
+
+        .main-title {
+            font-size: 2.8rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #228B22, #FFD700, #32CD32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #E2E8F0;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .document-ref {
+            font-size: 1.1rem;
+            color: #A0AEC0;
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        #ppe-container {
+            flex: 1;
+            position: relative;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            box-shadow: inset 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .ppe-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 2rem;
+            height: 100%;
+        }
+
+        .ppe-card {
+            background: linear-gradient(135deg, #2D3748, #4A5568);
+            border-radius: 20px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .ppe-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(34, 139, 34, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .ppe-card:hover::before {
+            left: 100%;
+        }
+
+        .ppe-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(34, 139, 34, 0.2);
+            border-color: rgba(34, 139, 34, 0.4);
+            background: linear-gradient(135deg, #3D4852, #5A6578);
+        }
+
+        .ppe-card.active {
+            background: linear-gradient(135deg, #228B22, #32CD32);
+            color: #1A202C;
+            border-color: #228B22;
+            box-shadow: 0 16px 48px rgba(34, 139, 34, 0.4);
+            animation: activeGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes activeGlow {
+            0%, 100% { box-shadow: 0 16px 48px rgba(34, 139, 34, 0.4); }
+            50% { box-shadow: 0 20px 60px rgba(34, 139, 34, 0.6); }
+        }
+
+        .ppe-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .ppe-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .ppe-standard {
+            font-size: 1rem;
+            opacity: 0.8;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #228B22;
+        }
+
+        .ppe-description {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            font-weight: 300;
+            line-height: 1.3;
+        }
+
+        .compliance-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(34, 139, 34, 0.2);
+            border: 1px solid rgba(34, 139, 34, 0.4);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-title {
+            font-size: 2.2rem;
+            color: #228B22;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 2px solid rgba(34, 139, 34, 0.3);
+            padding-bottom: 1rem;
+        }
+
+        .competency-info {
+            margin-bottom: 3rem;
+        }
+
+        .competency-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 12px;
+            border-left: 4px solid #228B22;
+            transition: all 0.3s ease;
+        }
+
+        .competency-item:hover {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.1), rgba(34, 139, 34, 0.05));
+            transform: translateX(8px);
+        }
+
+        .competency-icon {
+            font-size: 1.8rem;
+            margin-right: 1.5rem;
+            min-width: 50px;
+            color: #228B22;
+        }
+
+        .competency-content h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #E2E8F0;
+            font-weight: 600;
+        }
+
+        .competency-content p {
+            font-size: 1rem;
+            color: #A0AEC0;
+            line-height: 1.5;
+        }
+
+        .assessment-section {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.08), rgba(255, 215, 0, 0.04));
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(34, 139, 34, 0.2);
+        }
+
+        .assessment-title {
+            font-size: 1.4rem;
+            color: #228B22;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .assessment-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .assessment-list li {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            margin: 0.8rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid #228B22;
+            font-size: 1rem;
+            color: #E2E8F0;
+            transition: all 0.3s ease;
+        }
+
+        .assessment-list li:hover {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.1), rgba(34, 139, 34, 0.05));
+            transform: translateX(5px);
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1A202C, #2D3748);
+            border: 2px solid #228B22;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 1000px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .popup-title {
+            font-size: 2.2rem;
+            color: #228B22;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .popup-standard {
+            font-size: 1.4rem;
+            color: #FFD700;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 500;
+            background: rgba(34, 139, 34, 0.1);
+            padding: 1rem;
+            border-radius: 12px;
+            border-left: 4px solid #228B22;
+        }
+
+        .requirement-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .requirement-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #228B22;
+        }
+
+        .requirement-section h4 {
+            color: #228B22;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .requirement-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .requirement-section li {
+            margin: 0.8rem 0;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            font-size: 1rem;
+            border-left: 2px solid rgba(34, 139, 34, 0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #228B22;
+            font-size: 2.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #32CD32;
+            transform: scale(1.1);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.1rem;
+            color: #718096;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        /* Touch-friendly sizing for immersive projection */
+        @media (min-width: 1920px) {
+            .main-title { font-size: 3.6rem; }
+            .subtitle { font-size: 2.4rem; }
+            .ppe-card { padding: 2.5rem; }
+            .ppe-icon { font-size: 3.5rem; }
+            .ppe-title { font-size: 1.5rem; }
+            .sidebar-title { font-size: 2.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-panel">
+            <div class="header">
+                <h1 class="main-title">PPE, COMPETENCY & ASSESSMENT</h1>
+                <h2 class="subtitle">EBTA Standards & Requirements</h2>
+                <p class="document-ref">NEL-STH-NSA-5900-OHS-PRC-0008 Rev 04</p>
+            </div>
+            
+            <div id="ppe-container">
+                <div class="ppe-grid">
+                    <!-- Personal Protective Equipment -->
+                    <div class="ppe-card" id="ppe1">
+                        <div class="compliance-indicator">🛡️</div>
+                        <div class="ppe-icon">🦺</div>
+                        <div class="ppe-title">Personal Protective Equipment</div>
+                        <div class="ppe-standard">AS 1891 Compliance</div>
+                        <div class="ppe-description">Harnesses, lanyards, and fall arrest systems</div>
+                    </div>
+                    
+                    <!-- Equipment Inspection -->
+                    <div class="ppe-card" id="ppe2">
+                        <div class="compliance-indicator">🔍</div>
+                        <div class="ppe-icon">📋</div>
+                        <div class="ppe-title">Equipment Inspection</div>
+                        <div class="ppe-standard">Pre-Use & Formal</div>
+                        <div class="ppe-description">Daily checks and 6-monthly inspections</div>
+                    </div>
+                    
+                    <!-- Training Requirements -->
+                    <div class="ppe-card" id="ppe3">
+                        <div class="compliance-indicator">🎓</div>
+                        <div class="ppe-icon">📚</div>
+                        <div class="ppe-title">Training Requirements</div>
+                        <div class="ppe-standard">EBTA Competency</div>
+                        <div class="ppe-description">Working at Heights certification mandatory</div>
+                    </div>
+                    
+                    <!-- Competency Assessment -->
+                    <div class="ppe-card" id="ppe4">
+                        <div class="compliance-indicator">✅</div>
+                        <div class="ppe-icon">📊</div>
+                        <div class="ppe-title">Competency Assessment</div>
+                        <div class="ppe-standard">Verification Process</div>
+                        <div class="ppe-description">Skills verification and documentation</div>
+                    </div>
+                    
+                    <!-- Refresher Training -->
+                    <div class="ppe-card" id="ppe5">
+                        <div class="compliance-indicator">🔄</div>
+                        <div class="ppe-icon">🕐</div>
+                        <div class="ppe-title">Refresher Training</div>
+                        <div class="ppe-standard">3-Year Cycle</div>
+                        <div class="ppe-description">Mandatory refresher and incident-triggered</div>
+                    </div>
+                    
+                    <!-- Documentation -->
+                    <div class="ppe-card" id="ppe6">
+                        <div class="compliance-indicator">📄</div>
+                        <div class="ppe-icon">🗂️</div>
+                        <div class="ppe-title">Documentation</div>
+                        <div class="ppe-standard">Record Keeping</div>
+                        <div class="ppe-description">Training records and competency verification</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <h3 class="sidebar-title">Competency Framework</h3>
+            
+            <div class="competency-info">
+                <div class="competency-item">
+                    <div class="competency-icon">👤</div>
+                    <div class="competency-content">
+                        <h4>Personnel Qualifications</h4>
+                        <p>All personnel >2m fall risk must hold current Working at Heights certification</p>
+                    </div>
+                </div>
+                
+                <div class="competency-item">
+                    <div class="competency-icon">🔧</div>
+                    <div class="competency-content">
+                        <h4>Equipment-Specific Training</h4>
+                        <p>MEWP, scaffold, rope access (IRATA/SPRAT) certifications as required</p>
+                    </div>
+                </div>
+                
+                <div class="competency-item">
+                    <div class="competency-icon">👥</div>
+                    <div class="competency-content">
+                        <h4>Role-Based Requirements</h4>
+                        <p>Engineers, supervisors, TWCs have additional competency obligations</p>
+                    </div>
+                </div>
+                
+                <div class="competency-item">
+                    <div class="competency-icon">📝</div>
+                    <div class="competency-content">
+                        <h4>Assessment & Verification</h4>
+                        <p>Competency verified by qualified assessors and documented</p>
+                    </div>
+                </div>
+                
+                <div class="competency-item">
+                    <div class="competency-icon">🔄</div>
+                    <div class="competency-content">
+                        <h4>Continuous Improvement</h4>
+                        <p>Regular review, incident-triggered refresher, skills updates</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="assessment-section">
+                <div class="assessment-title">Assessment Criteria</div>
+                <ul class="assessment-list">
+                    <li>Hazard identification and risk assessment skills</li>
+                    <li>Proper PPE selection, inspection, and use</li>
+                    <li>Fall protection system knowledge and application</li>
+                    <li>Emergency response and rescue procedures</li>
+                    <li>EBTA procedure compliance and documentation</li>
+                    <li>Communication and supervision responsibilities</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popup-overlay"></div>
+    <div class="popup" id="popup">
+        <button class="close-btn" onclick="closePopup()">&times;</button>
+        <div class="popup-title" id="popup-title"></div>
+        <div class="popup-standard" id="popup-standard"></div>
+        <div class="requirement-sections" id="requirement-sections"></div>
+    </div>
+
+    <div class="footer">
+        Touch any PPE/Competency area for detailed EBTA requirements | Internal Staff Refresher Training
+    </div>
+
+    <script>
+        // Enhanced PPE and competency requirements for EBTA internal training
+        const ppeRequirements = {
+            ppe1: {
+                title: "Personal Protective Equipment",
+                standard: "AS 1891 Compliance - Fall Protection Equipment Standards",
+                sections: {
+                    "Harness Requirements": [
+                        "Full body harness complying with AS 1891.1 - Industrial fall arrest harnesses",
+                        "Dorsal and sternal attachment points for fall arrest and work positioning",
+                        "Adjustable leg, chest, and waist straps for proper fit and comfort",
+                        "Identification label showing manufacturer, model, date of manufacture",
+                        "Maximum user weight capacity clearly marked (typically 140kg including tools)",
+                        "Compatible with all connecting devices and rescue equipment used on site"
+                    ],
+                    "Lanyard & Connecting Devices": [
+                        "Energy absorbing lanyards complying with AS 1891.4 for fall arrest",
+                        "Work positioning lanyards AS 1891.2 for restraint and positioning",
+                        "Self-retracting lifelines (SRLs) AS 1891.3 where specified",
+                        "Karabiners and connectors AS 1891.5 with minimum 23kN gate strength",
+                        "All connecting devices must be compatible and certified together",
+                        "Maximum combined lanyard length 2 metres including energy absorber"
+                    ],
+                    "EBTA Selection Criteria": [
+                        "Equipment selected based on specific work task and environment",
+                        "Compatibility with rescue equipment and emergency procedures",
+                        "Consideration of suspension trauma relief straps where appropriate",
+                        "Integration with other PPE (hard hats, high-vis, safety footwear)",
+                        "Supplier certification and traceability documentation required",
+                        "Regular review of equipment specifications against evolving standards"
+                    ]
+                }
+            },
+            ppe2: {
+                title: "Equipment Inspection Requirements",
+                standard: "Pre-Use Daily Inspections & 6-Monthly Formal Inspections",
+                sections: {
+                    "Pre-Use Inspection (Daily)": [
+                        "Visual inspection by competent user before each use",
+                        "Check for cuts, fraying, abrasion, or damage to webbing/rope",
+                        "Inspect stitching for loose threads, broken stitches, or deterioration",
+                        "Examine hardware for cracks, corrosion, sharp edges, or deformation",
+                        "Test all buckles, adjusters, and locking mechanisms for proper function",
+                        "Immediate removal from service if any defects identified"
+                    ],
+                    "Formal Inspection (6-Monthly)": [
+                        "Detailed inspection by qualified competent person (minimum every 6 months)",
+                        "Complete documentation including inspection date, findings, and actions",
+                        "Testing of energy absorbers and self-retracting lifeline mechanisms",
+                        "Verification of manufacturer specifications and compliance markings",
+                        "Assessment of equipment service life and replacement recommendations",
+                        "Inspection records maintained for equipment lifecycle"
+                    ],
+                    "EBTA Documentation Requirements": [
+                        "Equipment register maintained with unique identification numbers",
+                        "Inspection records linked to specific equipment items",
+                        "Defect reporting and corrective action documentation",
+                        "Equipment retirement and disposal records",
+                        "Competent person qualifications and training records",
+                        "Integration with EBTA asset management systems"
+                    ]
+                }
+            },
+            ppe3: {
+                title: "Training Requirements",
+                standard: "EBTA Working at Heights Competency Standards",
+                sections: {
+                    "Mandatory Training": [
+                        "Working at Heights training certification required for all personnel >2m fall risk",
+                        "Training must be delivered by registered training organisation (RTO)",
+                        "Course content must align with national competency standards (RIIWHS204E)",
+                        "Practical assessment component including equipment use and rescue procedures",
+                        "Theory assessment covering hazard identification, risk assessment, and controls",
+                        "Certificate validity and recognition by EBTA and principal contractors"
+                    ],
+                    "Equipment-Specific Training": [
+                        "MEWP operator competency certification (RIIHAN308E or equivalent)",
+                        "Scaffolding erection and inspection training for relevant personnel",
+                        "Rope access certification (IRATA or SPRAT) for specialised work",
+                        "Temporary Works Coordinator (TWC) qualifications where required",
+                        "Rescue training for designated rescue team members",
+                        "Equipment manufacturer training for specialised fall protection systems"
+                    ],
+                    "EBTA Internal Requirements": [
+                        "Site-specific induction covering EBTA procedures and standards",
+                        "Toolbox talks and safety briefings for ongoing awareness",
+                        "Competency verification by EBTA safety personnel or delegates",
+                        "Integration with EBTA learning management system",
+                        "Training records maintained in personnel files",
+                        "Regular review of training effectiveness and content updates"
+                    ]
+                }
+            },
+            ppe4: {
+                title: "Competency Assessment & Verification",
+                standard: "EBTA Skills Verification and Documentation Process",
+                sections: {
+                    "Assessment Process": [
+                        "Initial competency assessment before commencing height work",
+                        "Practical demonstration of equipment selection, inspection, and use",
+                        "Hazard identification and risk assessment scenario testing",
+                        "Emergency response and rescue procedure knowledge verification",
+                        "EBTA procedure compliance and documentation requirements",
+                        "Assessment conducted by qualified and experienced assessors"
+                    ],
+                    "Verification Documentation": [
+                        "Competency verification form completed and signed by assessor",
+                        "Skills matrix maintained showing individual competency levels",
+                        "Training certificates and qualifications verified and recorded",
+                        "Competency gaps identified and training plans developed",
+                        "Regular review and update of competency records",
+                        "Integration with EBTA human resources and project systems"
+                    ],
+                    "Ongoing Monitoring": [
+                        "Regular observation of work practices and safety behaviours",
+                        "Feedback and coaching provided to maintain competency standards",
+                        "Incident investigation to identify competency-related factors",
+                        "Peer review and mentoring programs for skill development",
+                        "Recognition and reward for demonstrated safety competency",
+                        "Continuous improvement based on industry best practices"
+                    ]
+                }
+            },
+            ppe5: {
+                title: "Refresher Training Requirements",
+                standard: "3-Year Mandatory Cycle & Incident-Triggered Refresher",
+                sections: {
+                    "3-Year Refresher Cycle": [
+                        "Mandatory refresher training every 3 years maximum",
+                        "Earlier refresher if significant changes to procedures or equipment",
+                        "Training content updated to reflect current standards and practices",
+                        "Assessment of retained knowledge and practical skills",
+                        "Identification of skill gaps and additional training needs",
+                        "Certificate renewal and competency verification update"
+                    ],
+                    "Incident-Triggered Refresher": [
+                        "Immediate refresher training following serious incidents or near misses",
+                        "Training focused on specific incident causes and prevention measures",
+                        "Individual or team-based training depending on incident scope",
+                        "Return to work competency assessment before resuming height work",
+                        "Documentation of incident-related training and outcomes",
+                        "Integration with incident investigation and corrective action plans"
+                    ],
+                    "EBTA Refresher Standards": [
+                        "Refresher training delivered by qualified trainers and assessors",
+                        "Content customised to EBTA procedures and project requirements",
+                        "Practical components emphasising hands-on skills and procedures",
+                        "Group discussions and case studies based on EBTA experiences",
+                        "Technology-enhanced learning including immersive training systems",
+                        "Effectiveness evaluation and continuous improvement of training programs"
+                    ]
+                }
+            },
+            ppe6: {
+                title: "Documentation & Record Keeping",
+                standard: "EBTA Training Records and Competency Documentation",
+                sections: {
+                    "Training Records": [
+                        "Individual training files maintained for all personnel",
+                        "Certificates, qualifications, and competency verifications filed",
+                        "Training attendance records and assessment results documented",
+                        "Refresher training schedules and completion tracking",
+                        "Equipment-specific training records linked to work assignments",
+                        "Digital records backed up and accessible for audits and reviews"
+                    ],
+                    "Competency Documentation": [
+                        "Skills matrices showing individual and team competency levels",
+                        "Competency gap analysis and training needs assessments",
+                        "Assessment forms and verification documentation",
+                        "Supervisor and peer feedback records",
+                        "Performance monitoring and improvement plans",
+                        "Integration with project resource planning and allocation"
+                    ],
+                    "Compliance Management": [
+                        "Regular audits of training and competency records",
+                        "Compliance reporting to clients and regulatory authorities",
+                        "Integration with EBTA quality management systems",
+                        "Document control and version management procedures",
+                        "Access controls and confidentiality protection",
+                        "Retention schedules and archive management"
+                    ]
+                }
+            }
+        };
+
+        let currentPPE = null;
+        let animationInterval = null;
+
+        function init() {
+            // Add event listeners to all PPE cards
+            document.querySelectorAll('.ppe-card').forEach(card => {
+                card.addEventListener('click', handlePPEClick);
+                card.addEventListener('touchstart', handleTouchStart);
+            });
+
+            // Add overlay click listener
+            document.getElementById('popup-overlay').addEventListener('click', closePopup);
+
+            // Start professional animation sequence
+            startAnimationSequence();
+        }
+
+        function handlePPEClick(event) {
+            const ppeId = event.currentTarget.id;
+            showPPEPopup(ppeId);
+            highlightPPE(ppeId);
+        }
+
+        function handleTouchStart(event) {
+            event.preventDefault();
+            const ppeId = event.currentTarget.id;
+            showPPEPopup(ppeId);
+            highlightPPE(ppeId);
+        }
+
+        function highlightPPE(ppeId) {
+            // Remove active class from all PPE cards
+            document.querySelectorAll('.ppe-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Add active class to selected PPE
+            document.getElementById(ppeId).classList.add('active');
+            currentPPE = ppeId;
+        }
+
+        function showPPEPopup(ppeId) {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('popup-overlay');
+            const title = document.getElementById('popup-title');
+            const standard = document.getElementById('popup-standard');
+            const sections = document.getElementById('requirement-sections');
+            const ppeData = ppeRequirements[ppeId];
+
+            title.textContent = ppeData.title;
+            standard.textContent = ppeData.standard;
+            
+            let sectionsHtml = '';
+            Object.entries(ppeData.sections).forEach(([sectionTitle, items]) => {
+                sectionsHtml += `
+                    <div class="requirement-section">
+                        <h4>${sectionTitle}</h4>
+                        <ul>
+                            ${items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+            
+            sections.innerHTML = sectionsHtml;
+
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+
+            // Auto-close after 25 seconds for training flow
+            setTimeout(() => {
+                closePopup();
+            }, 25000);
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+            
+            // Remove active class from current PPE
+            if (currentPPE) {
+                document.getElementById(currentPPE).classList.remove('active');
+                currentPPE = null;
+            }
+        }
+
+        function startAnimationSequence() {
+            let ppeIndex = 1;
+            
+            animationInterval = setInterval(() => {
+                // Remove active class from all PPE cards
+                document.querySelectorAll('.ppe-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                
+                // Add active class to current PPE
+                const currentPPEElement = document.getElementById(`ppe${ppeIndex}`);
+                if (currentPPEElement) {
+                    currentPPEElement.classList.add('active');
+                }
+                
+                ppeIndex++;
+                if (ppeIndex > 6) {
+                    ppeIndex = 1;
+                }
+            }, 4000); // 4-second intervals for PPE/competency areas
+        }
+
+        // Keyboard support for accessibility
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Initialize when page loads
+        window.addEventListener('load', init);
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+            }
+        });
+    </script>
+</body>
+</html>

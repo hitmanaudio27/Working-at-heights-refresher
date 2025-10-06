@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBTA Working at Heights - Incident Scenarios</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #2d3748 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            cursor: none;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            height: 100vh;
+            gap: 3rem;
+            padding: 3rem;
+        }
+
+        .main-panel {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(255, 69, 0, 0.1), rgba(255, 140, 0, 0.05));
+            border-radius: 15px;
+            border: 1px solid rgba(255, 69, 0, 0.2);
+        }
+
+        .main-title {
+            font-size: 3.2rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #FF4500, #FF6347, #FF8C00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #E2E8F0;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .document-ref {
+            font-size: 1.1rem;
+            color: #A0AEC0;
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        #scenarios-container {
+            flex: 1;
+            position: relative;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            box-shadow: inset 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 2rem;
+            height: 100%;
+        }
+
+        .scenario-card {
+            background: linear-gradient(135deg, #2D3748, #4A5568);
+            border-radius: 20px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .scenario-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 69, 0, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .scenario-card:hover::before {
+            left: 100%;
+        }
+
+        .scenario-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(255, 69, 0, 0.2);
+            border-color: rgba(255, 69, 0, 0.4);
+            background: linear-gradient(135deg, #3D4852, #5A6578);
+        }
+
+        .scenario-card.active {
+            background: linear-gradient(135deg, #FF4500, #FF6347);
+            color: #1A202C;
+            border-color: #FF4500;
+            box-shadow: 0 16px 48px rgba(255, 69, 0, 0.4);
+            animation: activeGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes activeGlow {
+            0%, 100% { box-shadow: 0 16px 48px rgba(255, 69, 0, 0.4); }
+            50% { box-shadow: 0 20px 60px rgba(255, 69, 0, 0.6); }
+        }
+
+        .scenario-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .scenario-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .scenario-type {
+            font-size: 1rem;
+            opacity: 0.8;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            color: #FF6347;
+        }
+
+        .scenario-description {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            font-weight: 300;
+            line-height: 1.3;
+        }
+
+        .risk-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 69, 0, 0.2);
+            border: 1px solid rgba(255, 69, 0, 0.4);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .sidebar-title {
+            font-size: 2.2rem;
+            color: #FF4500;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 69, 0, 0.3);
+            padding-bottom: 1rem;
+        }
+
+        .learning-objectives {
+            margin-bottom: 3rem;
+        }
+
+        .objective-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 12px;
+            border-left: 4px solid #FF4500;
+            transition: all 0.3s ease;
+        }
+
+        .objective-item:hover {
+            background: linear-gradient(135deg, rgba(255, 69, 0, 0.1), rgba(255, 69, 0, 0.05));
+            transform: translateX(8px);
+        }
+
+        .objective-icon {
+            font-size: 1.8rem;
+            margin-right: 1.5rem;
+            min-width: 50px;
+            color: #FF4500;
+        }
+
+        .objective-content h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #E2E8F0;
+            font-weight: 600;
+        }
+
+        .objective-content p {
+            font-size: 1rem;
+            color: #A0AEC0;
+            line-height: 1.5;
+        }
+
+        .tna-section {
+            background: linear-gradient(135deg, rgba(255, 69, 0, 0.08), rgba(255, 140, 0, 0.04));
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 69, 0, 0.2);
+        }
+
+        .tna-title {
+            font-size: 1.4rem;
+            color: #FF4500;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .tna-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tna-list li {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            margin: 0.8rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid #FF4500;
+            font-size: 1rem;
+            color: #E2E8F0;
+            transition: all 0.3s ease;
+        }
+
+        .tna-list li:hover {
+            background: linear-gradient(135deg, rgba(255, 69, 0, 0.1), rgba(255, 69, 0, 0.05));
+            transform: translateX(5px);
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1A202C, #2D3748);
+            border: 2px solid #FF4500;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 1000px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .popup-title {
+            font-size: 2.2rem;
+            color: #FF4500;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .popup-scenario {
+            font-size: 1.4rem;
+            color: #FF6347;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 500;
+            font-style: italic;
+            background: rgba(255, 69, 0, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #FF4500;
+        }
+
+        .questions-container {
+            margin: 2rem 0;
+        }
+
+        .question-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-left: 4px solid #FF4500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .question-item:hover {
+            background: linear-gradient(135deg, rgba(255, 69, 0, 0.1), rgba(255, 69, 0, 0.05));
+            transform: translateX(8px);
+        }
+
+        .question-letter {
+            display: inline-block;
+            background: #FF4500;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 1rem;
+            vertical-align: middle;
+        }
+
+        .question-text {
+            display: inline-block;
+            vertical-align: middle;
+            font-size: 1.1rem;
+            color: #E2E8F0;
+            width: calc(100% - 60px);
+        }
+
+        .answer-reveal {
+            background: linear-gradient(135deg, #FF4500, #FF6347);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 8px;
+            animation: revealGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes revealGlow {
+            0%, 100% { box-shadow: 0 8px 32px rgba(255, 69, 0, 0.3); }
+            50% { box-shadow: 0 12px 48px rgba(255, 69, 0, 0.5); }
+        }
+
+        .ebta-action {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 69, 0, 0.3);
+        }
+
+        .ebta-action h4 {
+            color: #FF4500;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .ebta-action ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .ebta-action li {
+            margin: 0.8rem 0;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            font-size: 1rem;
+            border-left: 2px solid rgba(255, 69, 0, 0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #FF4500;
+            font-size: 2.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #FF6347;
+            transform: scale(1.1);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.1rem;
+            color: #718096;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        /* Touch-friendly sizing for immersive projection */
+        @media (min-width: 1920px) {
+            .main-title { font-size: 4.2rem; }
+            .subtitle { font-size: 2.4rem; }
+            .scenario-card { padding: 2.5rem; }
+            .scenario-icon { font-size: 3.5rem; }
+            .scenario-title { font-size: 1.5rem; }
+            .sidebar-title { font-size: 2.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-panel">
+            <div class="header">
+                <h1 class="main-title">INCIDENT SCENARIOS</h1>
+                <h2 class="subtitle">Training Gaps & Prevention Strategies</h2>
+                <p class="document-ref">EBTA TNA Analysis - Internal Staff Refresher</p>
+            </div>
+            
+            <div id="scenarios-container">
+                <div class="scenarios-grid">
+                    <!-- Scenario 1: Equipment Inspection -->
+                    <div class="scenario-card" id="scenario1">
+                        <div class="risk-indicator">⚠️</div>
+                        <div class="scenario-icon">🔍</div>
+                        <div class="scenario-title">Equipment Inspection Failure</div>
+                        <div class="scenario-type">Pre-Use Check Gap</div>
+                        <div class="scenario-description">Worker uses damaged harness without inspection</div>
+                    </div>
+                    
+                    <!-- Scenario 2: Permit System -->
+                    <div class="scenario-card" id="scenario2">
+                        <div class="risk-indicator">📋</div>
+                        <div class="scenario-icon">📝</div>
+                        <div class="scenario-title">Permit System Breakdown</div>
+                        <div class="scenario-type">Documentation Gap</div>
+                        <div class="scenario-description">Height work commenced without valid permit</div>
+                    </div>
+                    
+                    <!-- Scenario 3: Hazard Recognition -->
+                    <div class="scenario-card" id="scenario3">
+                        <div class="risk-indicator">👁️</div>
+                        <div class="scenario-icon">⚡</div>
+                        <div class="scenario-title">Hazard Recognition Failure</div>
+                        <div class="scenario-type">Awareness Gap</div>
+                        <div class="scenario-description">Overhead powerlines not identified during setup</div>
+                    </div>
+                    
+                    <!-- Scenario 4: Rescue Planning -->
+                    <div class="scenario-card" id="scenario4">
+                        <div class="risk-indicator">🚨</div>
+                        <div class="scenario-icon">🆘</div>
+                        <div class="scenario-title">Rescue Planning Gap</div>
+                        <div class="scenario-type">Emergency Response</div>
+                        <div class="scenario-description">No rescue plan for suspended worker</div>
+                    </div>
+                    
+                    <!-- Scenario 5: Communication -->
+                    <div class="scenario-card" id="scenario5">
+                        <div class="risk-indicator">📢</div>
+                        <div class="scenario-icon">📞</div>
+                        <div class="scenario-title">Communication Breakdown</div>
+                        <div class="scenario-type">Supervision Gap</div>
+                        <div class="scenario-description">Changed conditions not communicated to team</div>
+                    </div>
+                    
+                    <!-- Scenario 6: Risk Assessment -->
+                    <div class="scenario-card" id="scenario6">
+                        <div class="risk-indicator">📊</div>
+                        <div class="scenario-icon">⚖️</div>
+                        <div class="scenario-title">Risk Assessment Update</div>
+                        <div class="scenario-type">WPRA Gap</div>
+                        <div class="scenario-description">WPRA not updated for changed conditions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <h3 class="sidebar-title">Learning Objectives</h3>
+            
+            <div class="learning-objectives">
+                <div class="objective-item">
+                    <div class="objective-icon">🎯</div>
+                    <div class="objective-content">
+                        <h4>Identify Common Gaps</h4>
+                        <p>Recognize typical training gaps that lead to incidents</p>
+                    </div>
+                </div>
+                
+                <div class="objective-item">
+                    <div class="objective-icon">🔧</div>
+                    <div class="objective-content">
+                        <h4>Apply EBTA Actions</h4>
+                        <p>Learn specific EBTA procedures to prevent incidents</p>
+                    </div>
+                </div>
+                
+                <div class="objective-item">
+                    <div class="objective-icon">🧠</div>
+                    <div class="objective-content">
+                        <h4>Reinforce Learning</h4>
+                        <p>Use interactive scenarios to embed key actions</p>
+                    </div>
+                </div>
+                
+                <div class="objective-item">
+                    <div class="objective-icon">📈</div>
+                    <div class="objective-content">
+                        <h4>Improve Performance</h4>
+                        <p>Address TNA findings through targeted training</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tna-section">
+                <div class="tna-title">TNA Key Findings</div>
+                <ul class="tna-list">
+                    <li>67% of incidents involve inadequate pre-use inspections</li>
+                    <li>45% related to permit system non-compliance</li>
+                    <li>38% involve failure to identify changing hazards</li>
+                    <li>52% lack adequate rescue planning</li>
+                    <li>41% involve communication breakdowns</li>
+                    <li>33% related to outdated risk assessments</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popup-overlay"></div>
+    <div class="popup" id="popup">
+        <button class="close-btn" onclick="closePopup()">&times;</button>
+        <div class="popup-title" id="popup-title"></div>
+        <div class="popup-scenario" id="popup-scenario"></div>
+        <div class="questions-container" id="questions-container"></div>
+        <div class="answer-reveal" id="answer-reveal" style="display: none;"></div>
+        <div class="ebta-action" id="ebta-action"></div>
+    </div>
+
+    <div class="footer">
+        Touch any incident scenario to explore prevention strategies | EBTA Internal Staff Refresher Training
+    </div>
+
+    <script>
+        // Enhanced incident scenarios with question-answer format spelling out EBTA actions
+        const incidentScenarios = {
+            scenario1: {
+                title: "Equipment Inspection Failure",
+                scenario: "A worker is about to use a harness that shows signs of wear and damage. The pre-use inspection was skipped due to time pressure. What EBTA action should be taken?",
+                questions: [
+                    { letter: "C", text: "What should you CHECK first before using any fall protection equipment?" },
+                    { letter: "H", text: "What HAZARDS could result from using damaged equipment?" },
+                    { letter: "E", text: "What EQUIPMENT standards must be met according to EBTA procedures?" },
+                    { letter: "C", text: "What CERTIFICATION is required for equipment inspections?" },
+                    { letter: "K", text: "What KEY documentation must be maintained for all equipment?" }
+                ],
+                action: "CHECK",
+                ebta_requirements: {
+                    title: "EBTA Equipment Inspection Requirements",
+                    details: [
+                        "Pre-use visual inspection by competent person before each use",
+                        "Formal equipment inspections every 6 months minimum by qualified inspector",
+                        "Immediate removal from service if any defects identified",
+                        "Inspection records maintained for equipment lifecycle",
+                        "AS 1891 compliance for all personal fall protection equipment",
+                        "Equipment defect reporting and tagging procedures",
+                        "Replacement criteria clearly documented and followed"
+                    ]
+                }
+            },
+            scenario2: {
+                title: "Permit System Breakdown",
+                scenario: "Workers have started height work above 2 metres without obtaining a Working at Height Permit. Supervision was not aware the permit system applied to this task. What EBTA action is required?",
+                questions: [
+                    { letter: "S", text: "What should you STOP immediately when permit violations are identified?" },
+                    { letter: "T", text: "What TRAINING requirements apply to permit systems?" },
+                    { letter: "O", text: "What OBLIGATIONS do supervisors have regarding permits?" },
+                    { letter: "P", text: "What PROCEDURES must be followed before height work commences?" }
+                ],
+                action: "STOP",
+                ebta_requirements: {
+                    title: "EBTA Working at Height Permit System",
+                    details: [
+                        "Working at Height Permit required for all work >2m fall risk",
+                        "Permit valid for maximum 7 days or specific work scope completion",
+                        "Daily permit review and hazard reassessment required",
+                        "Permit holder competency verification and signature mandatory",
+                        "Emergency contact details and rescue arrangements documented",
+                        "Immediate work cessation if permit conditions not met",
+                        "Supervisor responsibility to ensure permit compliance"
+                    ]
+                }
+            },
+            scenario3: {
+                title: "Hazard Recognition Failure",
+                scenario: "A MEWP is being positioned near overhead powerlines that were not identified during the initial risk assessment. The operator is unaware of the electrical hazard. What EBTA action is needed?",
+                questions: [
+                    { letter: "A", text: "What ASSESSMENT should be conducted immediately?" },
+                    { letter: "L", text: "What LIMITATIONS must be established around powerlines?" },
+                    { letter: "E", text: "What ELECTRICAL safety requirements apply?" },
+                    { letter: "R", text: "What RESTRICTIONS must be implemented for MEWP operation?" },
+                    { letter: "T", text: "What TRAINING is required for electrical hazard awareness?" }
+                ],
+                action: "ALERT",
+                ebta_requirements: {
+                    title: "EBTA Hazard Identification & Assessment",
+                    details: [
+                        "Systematic hazard identification during WPRA development",
+                        "Daily hazard reassessment and communication to all personnel",
+                        "Minimum 3m clearance from overhead powerlines for MEWPs",
+                        "Electrical hazard awareness training for all MEWP operators",
+                        "Stop work authority when new hazards identified",
+                        "Immediate notification to supervision and safety personnel",
+                        "WPRA update required when conditions change"
+                    ]
+                }
+            },
+            scenario4: {
+                title: "Rescue Planning Gap",
+                scenario: "A worker is suspended in their harness after a fall arrest. No rescue plan was developed and rescue equipment is not readily available. What EBTA action must be implemented?",
+                questions: [
+                    { letter: "R", text: "What RESCUE procedures must be established before height work?" },
+                    { letter: "E", text: "What EQUIPMENT must be available for emergency response?" },
+                    { letter: "S", text: "What SUSPENSION trauma risks must be considered?" },
+                    { letter: "C", text: "What COMMUNICATION systems are required for emergencies?" },
+                    { letter: "U", text: "What URGENT timeframes apply to rescue operations?" },
+                    { letter: "E", text: "What EMERGENCY contacts must be readily available?" }
+                ],
+                action: "RESCUE",
+                ebta_requirements: {
+                    title: "EBTA Emergency Response & Rescue Planning",
+                    details: [
+                        "Rescue plan developed and communicated before height work commences",
+                        "Rescue equipment readily available and regularly inspected",
+                        "Maximum 15-minute rescue timeframe to prevent suspension trauma",
+                        "Emergency communication systems tested and functional",
+                        "Trained rescue personnel identified and available on site",
+                        "Emergency contact details prominently displayed",
+                        "Regular rescue drills and competency verification"
+                    ]
+                }
+            },
+            scenario5: {
+                title: "Communication Breakdown",
+                scenario: "Weather conditions have deteriorated during height work, but the information was not communicated to the work team. Workers continue operating in unsafe conditions. What EBTA action is required?",
+                questions: [
+                    { letter: "R", text: "What RADIO or communication protocols must be established?" },
+                    { letter: "E", text: "What ENVIRONMENTAL monitoring is required?" },
+                    { letter: "P", text: "What PROCEDURES exist for changing conditions?" },
+                    { letter: "O", text: "What OBLIGATIONS do supervisors have for communication?" },
+                    { letter: "R", text: "What REPORTING systems must be used for hazard updates?" },
+                    { letter: "T", text: "What TIMEFRAMES apply for hazard communication?" }
+                ],
+                action: "REPORT",
+                ebta_requirements: {
+                    title: "EBTA Communication & Supervision Requirements",
+                    details: [
+                        "Established communication protocols for all height work activities",
+                        "Regular weather monitoring and communication to work teams",
+                        "Immediate notification of changing conditions to all personnel",
+                        "Supervisor presence and oversight during critical operations",
+                        "Stop work authority exercised when conditions deteriorate",
+                        "Documented communication logs for critical safety information",
+                        "Emergency communication systems tested before work commences"
+                    ]
+                }
+            },
+            scenario6: {
+                title: "Risk Assessment Update Gap",
+                scenario: "Site conditions have changed significantly since the WPRA was completed, but the risk assessment has not been updated. New hazards are present that were not originally considered. What EBTA action is needed?",
+                questions: [
+                    { letter: "U", text: "What UPDATE procedures apply to WPRA when conditions change?" },
+                    { letter: "P", text: "What PROCESS must be followed for risk assessment revision?" },
+                    { letter: "D", text: "What DOCUMENTATION changes are required?" },
+                    { letter: "A", text: "What APPROVAL is needed for updated risk assessments?" },
+                    { letter: "T", text: "What TIMEFRAMES apply for WPRA updates?" },
+                    { letter: "E", text: "What ENGAGEMENT is required with the work team?" }
+                ],
+                action: "UPDATE",
+                ebta_requirements: {
+                    title: "EBTA Risk Assessment Management",
+                    details: [
+                        "WPRA must be updated when site conditions change significantly",
+                        "Work Pack Risk Assessment Workshops (WRAW) with supply chain when required",
+                        "Engineer approval required for all WPRA updates and revisions",
+                        "Immediate work cessation until updated WPRA is approved",
+                        "Communication of changes to all affected personnel",
+                        "Documentation of changes and rationale for updates",
+                        "Regular review cycles established for ongoing work packages"
+                    ]
+                }
+            }
+        };
+
+        let currentScenario = null;
+        let animationInterval = null;
+        let questionIndex = 0;
+
+        function init() {
+            // Add event listeners to all scenario cards
+            document.querySelectorAll('.scenario-card').forEach(card => {
+                card.addEventListener('click', handleScenarioClick);
+                card.addEventListener('touchstart', handleTouchStart);
+            });
+
+            // Add overlay click listener
+            document.getElementById('popup-overlay').addEventListener('click', closePopup);
+
+            // Start professional animation sequence
+            startAnimationSequence();
+        }
+
+        function handleScenarioClick(event) {
+            const scenarioId = event.currentTarget.id;
+            showScenarioPopup(scenarioId);
+            highlightScenario(scenarioId);
+        }
+
+        function handleTouchStart(event) {
+            event.preventDefault();
+            const scenarioId = event.currentTarget.id;
+            showScenarioPopup(scenarioId);
+            highlightScenario(scenarioId);
+        }
+
+        function highlightScenario(scenarioId) {
+            // Remove active class from all scenarios
+            document.querySelectorAll('.scenario-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Add active class to selected scenario
+            document.getElementById(scenarioId).classList.add('active');
+            currentScenario = scenarioId;
+        }
+
+        function showScenarioPopup(scenarioId) {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('popup-overlay');
+            const title = document.getElementById('popup-title');
+            const scenario = document.getElementById('popup-scenario');
+            const questionsContainer = document.getElementById('questions-container');
+            const answerReveal = document.getElementById('answer-reveal');
+            const ebta_action = document.getElementById('ebta-action');
+            const scenarioData = incidentScenarios[scenarioId];
+
+            title.textContent = scenarioData.title;
+            scenario.textContent = scenarioData.scenario;
+            
+            // Build questions
+            let questionsHtml = '';
+            scenarioData.questions.forEach((question, index) => {
+                questionsHtml += `
+                    <div class="question-item" onclick="revealQuestion(${index})">
+                        <span class="question-letter">${question.letter}</span>
+                        <span class="question-text">${question.text}</span>
+                    </div>
+                `;
+            });
+            questionsContainer.innerHTML = questionsHtml;
+
+            // Hide answer initially
+            answerReveal.style.display = 'none';
+            answerReveal.textContent = scenarioData.action;
+
+            // Build EBTA action section
+            let actionHtml = `
+                <h4>${scenarioData.ebta_requirements.title}</h4>
+                <ul>
+                    ${scenarioData.ebta_requirements.details.map(detail => `<li>${detail}</li>`).join('')}
+                </ul>
+            `;
+            ebta_action.innerHTML = actionHtml;
+
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+
+            // Reset question index
+            questionIndex = 0;
+
+            // Auto-reveal after 25 seconds for training flow
+            setTimeout(() => {
+                if (popup.style.display === 'block') {
+                    revealAnswer();
+                }
+            }, 25000);
+        }
+
+        function revealQuestion(index) {
+            // Highlight the clicked question
+            const questions = document.querySelectorAll('.question-item');
+            questions[index].style.background = 'linear-gradient(135deg, rgba(255, 69, 0, 0.2), rgba(255, 69, 0, 0.1))';
+            
+            questionIndex++;
+            
+            // If all questions revealed, show the answer
+            if (questionIndex >= incidentScenarios[currentScenario].questions.length) {
+                setTimeout(() => {
+                    revealAnswer();
+                }, 1000);
+            }
+        }
+
+        function revealAnswer() {
+            const answerReveal = document.getElementById('answer-reveal');
+            answerReveal.style.display = 'block';
+            answerReveal.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+            
+            // Remove active class from current scenario
+            if (currentScenario) {
+                document.getElementById(currentScenario).classList.remove('active');
+                currentScenario = null;
+            }
+            
+            // Reset question index
+            questionIndex = 0;
+        }
+
+        function startAnimationSequence() {
+            let scenarioIndex = 1;
+            
+            animationInterval = setInterval(() => {
+                // Remove active class from all scenarios
+                document.querySelectorAll('.scenario-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                
+                // Add active class to current scenario
+                const currentScenarioElement = document.getElementById(`scenario${scenarioIndex}`);
+                if (currentScenarioElement) {
+                    currentScenarioElement.classList.add('active');
+                }
+                
+                scenarioIndex++;
+                if (scenarioIndex > 6) {
+                    scenarioIndex = 1;
+                }
+            }, 4000); // 4-second intervals for incident scenarios
+        }
+
+        // Keyboard support for accessibility
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Initialize when page loads
+        window.addEventListener('load', init);
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+            }
+        });
+    </script>
+</body>
+</html>

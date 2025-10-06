@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBTA Working at Heights - Summary & Key Takeaways</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #2d3748 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            cursor: none;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+            gap: 3rem;
+            padding: 3rem;
+        }
+
+        .left-panel, .right-panel {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.1), rgba(255, 215, 0, 0.05));
+            border-radius: 15px;
+            border: 1px solid rgba(34, 139, 34, 0.2);
+            grid-column: 1 / -1;
+        }
+
+        .main-title {
+            font-size: 2.8rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #228B22, #FFD700, #32CD32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #E2E8F0;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .document-ref {
+            font-size: 1.1rem;
+            color: #A0AEC0;
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        .action-items-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .action-items-section::-webkit-scrollbar {
+            display: none;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            color: #228B22;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 2px solid rgba(34, 139, 34, 0.3);
+            padding-bottom: 1rem;
+        }
+
+        .action-category {
+            margin-bottom: 2.5rem;
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.08), rgba(255, 215, 0, 0.04));
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(34, 139, 34, 0.2);
+        }
+
+        .category-title {
+            font-size: 1.4rem;
+            color: #228B22;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .category-icon {
+            font-size: 1.8rem;
+            margin-right: 1rem;
+            min-width: 50px;
+        }
+
+        .action-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .action-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            margin: 1rem 0;
+            padding: 1.2rem;
+            border-radius: 10px;
+            border-left: 4px solid #228B22;
+            font-size: 1rem;
+            color: #E2E8F0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .action-item:hover {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.1), rgba(34, 139, 34, 0.05));
+            transform: translateX(8px);
+            box-shadow: 0 4px 16px rgba(34, 139, 34, 0.2);
+        }
+
+        .emergency-contacts {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.1), rgba(255, 69, 0, 0.05));
+            border: 1px solid rgba(220, 20, 60, 0.3);
+        }
+
+        .emergency-contacts .category-title {
+            color: #DC143C;
+        }
+
+        .emergency-contacts .action-item {
+            border-left-color: #DC143C;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .interactive-summary {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            flex: 1;
+            position: relative;
+        }
+
+        .slides-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 1.5rem;
+            height: calc(100% - 4rem);
+        }
+
+        .slide-card {
+            background: linear-gradient(135deg, #2D3748, #4A5568);
+            border-radius: 15px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .slide-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(34, 139, 34, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .slide-card:hover::before {
+            left: 100%;
+        }
+
+        .slide-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 36px rgba(34, 139, 34, 0.2);
+            border-color: rgba(34, 139, 34, 0.4);
+            background: linear-gradient(135deg, #3D4852, #5A6578);
+        }
+
+        .slide-card.active {
+            background: linear-gradient(135deg, #228B22, #32CD32);
+            color: #1A202C;
+            border-color: #228B22;
+            box-shadow: 0 12px 36px rgba(34, 139, 34, 0.4);
+            animation: activeGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes activeGlow {
+            0%, 100% { box-shadow: 0 12px 36px rgba(34, 139, 34, 0.4); }
+            50% { box-shadow: 0 16px 48px rgba(34, 139, 34, 0.6); }
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            background: rgba(34, 139, 34, 0.2);
+            border: 1px solid rgba(34, 139, 34, 0.4);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .slide-icon {
+            font-size: 2.2rem;
+            margin-bottom: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .slide-title {
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .knowledge-check {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.2), rgba(255, 215, 0, 0.1));
+            border: 2px solid rgba(34, 139, 34, 0.4);
+            border-radius: 15px;
+            padding: 1.5rem 3rem;
+            font-size: 1.2rem;
+            color: #228B22;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .knowledge-check:hover {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.3), rgba(255, 215, 0, 0.15));
+            transform: translateX(-50%) translateY(-4px);
+            box-shadow: 0 8px 24px rgba(34, 139, 34, 0.3);
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1A202C, #2D3748);
+            border: 2px solid #228B22;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 900px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .popup-title {
+            font-size: 2.2rem;
+            color: #228B22;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .key-points {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .key-point {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #228B22;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .key-point-icon {
+            font-size: 1.8rem;
+            margin-right: 1.5rem;
+            min-width: 50px;
+            color: #228B22;
+        }
+
+        .key-point-content h4 {
+            color: #228B22;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .key-point-content p {
+            font-size: 1rem;
+            color: #E2E8F0;
+            line-height: 1.5;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #228B22;
+            font-size: 2.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #32CD32;
+            transform: scale(1.1);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.1rem;
+            color: #718096;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        /* Touch-friendly sizing for immersive projection */
+        @media (min-width: 1920px) {
+            .main-title { font-size: 3.6rem; }
+            .subtitle { font-size: 2.4rem; }
+            .section-title { font-size: 2.6rem; }
+            .slide-card { padding: 2rem; }
+            .slide-icon { font-size: 2.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header" style="grid-column: 1 / -1;">
+            <h1 class="main-title">SUMMARY & KEY TAKEAWAYS</h1>
+            <h2 class="subtitle">EBTA Working at Heights Refresher Training</h2>
+            <p class="document-ref">NEL-STH-NSA-5900-OHS-PRC-0008 Rev 04 | Internal Staff Training Complete</p>
+        </div>
+
+        <div class="left-panel">
+            <div class="action-items-section">
+                <h3 class="section-title">Action Items for Staff</h3>
+                
+                <div class="action-category">
+                    <div class="category-title">
+                        <div class="category-icon">⚡</div>
+                        Immediate Actions to Implement EBTA Procedures
+                    </div>
+                    <ul class="action-list">
+                        <li class="action-item">Complete Working at Heights Permit before any work >2m fall risk</li>
+                        <li class="action-item">Verify current competency certification and training records</li>
+                        <li class="action-item">Conduct pre-use equipment inspection using EBTA checklist</li>
+                        <li class="action-item">Identify and implement hierarchy of controls starting with elimination</li>
+                        <li class="action-item">Establish rescue plan and emergency procedures before commencing work</li>
+                        <li class="action-item">Report any equipment defects or safety concerns immediately</li>
+                    </ul>
+                </div>
+
+                <div class="action-category">
+                    <div class="category-title">
+                        <div class="category-icon">🎓</div>
+                        Personal Competency Verification Requirements
+                    </div>
+                    <ul class="action-list">
+                        <li class="action-item">Ensure Working at Heights certification is current and valid</li>
+                        <li class="action-item">Complete equipment-specific training (MEWP, scaffold, rope access)</li>
+                        <li class="action-item">Schedule 3-year refresher training before expiry date</li>
+                        <li class="action-item">Maintain training records in personnel file</li>
+                        <li class="action-item">Participate in competency assessment and skills verification</li>
+                        <li class="action-item">Attend incident-triggered refresher training if required</li>
+                    </ul>
+                </div>
+
+                <div class="action-category">
+                    <div class="category-title">
+                        <div class="category-icon">🔍</div>
+                        Equipment Inspection Checklist Reminders
+                    </div>
+                    <ul class="action-list">
+                        <li class="action-item">Visual inspection of harness webbing for cuts, fraying, or damage</li>
+                        <li class="action-item">Check all stitching for loose threads or deterioration</li>
+                        <li class="action-item">Inspect hardware for cracks, corrosion, or deformation</li>
+                        <li class="action-item">Test buckles, adjusters, and locking mechanisms</li>
+                        <li class="action-item">Verify energy absorber and SRL functionality</li>
+                        <li class="action-item">Remove defective equipment from service immediately</li>
+                    </ul>
+                </div>
+
+                <div class="action-category emergency-contacts">
+                    <div class="category-title">
+                        <div class="category-icon">📞</div>
+                        Emergency Contact Information
+                    </div>
+                    <ul class="action-list">
+                        <li class="action-item">Emergency Services: 000 (Police, Fire, Ambulance)</li>
+                        <li class="action-item">Site Emergency Coordinator: [Site-Specific Number]</li>
+                        <li class="action-item">EBTA Safety Department: [EBTA Safety Contact]</li>
+                        <li class="action-item">WorkSafe Victoria: 1800 136 089</li>
+                        <li class="action-item">Poison Information Centre: 13 11 26</li>
+                        <li class="action-item">Site First Aid Officer: [Site-Specific Contact]</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="interactive-summary">
+                <h3 class="section-title">Training Summary</h3>
+                
+                <div class="slides-grid">
+                    <div class="slide-card" id="slide1">
+                        <div class="slide-number">1</div>
+                        <div class="slide-icon">📊</div>
+                        <div class="slide-title">Introduction & Purpose</div>
+                    </div>
+                    
+                    <div class="slide-card" id="slide2">
+                        <div class="slide-number">2</div>
+                        <div class="slide-icon">🔺</div>
+                        <div class="slide-title">Hierarchy of Control</div>
+                    </div>
+                    
+                    <div class="slide-card" id="slide3">
+                        <div class="slide-number">3</div>
+                        <div class="slide-icon">⚙️</div>
+                        <div class="slide-title">Risk Management Procedure</div>
+                    </div>
+                    
+                    <div class="slide-card" id="slide4">
+                        <div class="slide-number">4</div>
+                        <div class="slide-icon">🏗️</div>
+                        <div class="slide-title">Safety in Design</div>
+                    </div>
+                    
+                    <div class="slide-card" id="slide5">
+                        <div class="slide-number">5</div>
+                        <div class="slide-icon">🛡️</div>
+                        <div class="slide-title">Fall Protection Systems</div>
+                    </div>
+                    
+                    <div class="slide-card" id="slide6">
+                        <div class="slide-number">6</div>
+                        <div class="slide-icon">⚠️</div>
+                        <div class="slide-title">Incident Scenarios</div>
+                    </div>
+                    
+                    <div class="slide-card" id="slide7">
+                        <div class="slide-number">7</div>
+                        <div class="slide-icon">🚨</div>
+                        <div class="slide-title">Emergency Response</div>
+                    </div>
+                    
+                    <div class="slide-card" id="slide8">
+                        <div class="slide-number">8</div>
+                        <div class="slide-icon">🦺</div>
+                        <div class="slide-title">PPE & Competency</div>
+                    </div>
+                </div>
+
+                <div class="knowledge-check" onclick="showKnowledgeCheck()">
+                    🧠 Quick Knowledge Reinforcement
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popup-overlay"></div>
+    <div class="popup" id="popup">
+        <button class="close-btn" onclick="closePopup()">&times;</button>
+        <div class="popup-title" id="popup-title">Key Knowledge Reinforcement</div>
+        <div class="key-points" id="key-points"></div>
+    </div>
+
+    <div class="footer">
+        Touch any slide number for key takeaways | Complete your EBTA Working at Heights refresher training
+    </div>
+
+    <script>
+        // Key takeaways for each slide
+        const slideTakeaways = {
+            slide1: {
+                title: "Introduction & Purpose - Key Statistics",
+                points: [
+                    {
+                        icon: "📈",
+                        title: "Fall-from-Height Statistics",
+                        content: "29 fatalities in 2023 (71% increase), 1,352 injury claims (highest in 5 years). Prevention-first approach essential."
+                    },
+                    {
+                        icon: "🎯",
+                        title: "EBTA Prevention Philosophy",
+                        content: "Focus on elimination and engineering controls rather than relying on administrative controls and PPE."
+                    },
+                    {
+                        icon: "📋",
+                        title: "Compliance Framework",
+                        content: "Victorian WHS regulations, Australian Standards (AS 1891, AS 1576), and EBTA-specific procedures."
+                    }
+                ]
+            },
+            slide2: {
+                title: "Hierarchy of Control - 5 Levels",
+                points: [
+                    {
+                        icon: "🔴",
+                        title: "Level 1: Elimination (Most Effective)",
+                        content: "Prefabricate at ground level, design permanent guardrails, eliminate height work where possible."
+                    },
+                    {
+                        icon: "🟠",
+                        title: "Level 2-4: Substitution, Isolation, Engineering",
+                        content: "Travel restraint, guardrails, MEWPs, scaffolding - progressively less effective but still preferred."
+                    },
+                    {
+                        icon: "🔵",
+                        title: "Level 5: Administrative/PPE (Least Effective)",
+                        content: "Permits, training, harnesses - last resort when higher controls not reasonably practicable."
+                    }
+                ]
+            },
+            slide3: {
+                title: "Risk Management Procedure - 6 Steps",
+                points: [
+                    {
+                        icon: "🏗️",
+                        title: "Safety in Design (SiD)",
+                        content: "Early intervention during design phase to eliminate height risks before construction."
+                    },
+                    {
+                        icon: "📊",
+                        title: "Risk Assessment Process",
+                        content: "Package Risk Assessment → Work Pack Risk Assessment → Apply Hierarchy of Controls."
+                    },
+                    {
+                        icon: "📋",
+                        title: "Implementation & Monitoring",
+                        content: "SWMS development, control implementation, ongoing monitoring and review."
+                    }
+                ]
+            },
+            slide4: {
+                title: "Safety in Design - 4 Phases",
+                points: [
+                    {
+                        icon: "🎯",
+                        title: "Project Initiation",
+                        content: "Early SiD workshops, multidisciplinary team formation, risk identification."
+                    },
+                    {
+                        icon: "🔧",
+                        title: "Design Development",
+                        content: "Collaborative workshops, design reviews, risk elimination opportunities."
+                    },
+                    {
+                        icon: "✅",
+                        title: "Risk Elimination",
+                        content: "Permanent solutions, prefabrication strategies, design modifications."
+                    }
+                ]
+            },
+            slide5: {
+                title: "Fall Protection Systems - 6 Categories",
+                points: [
+                    {
+                        icon: "🏗️",
+                        title: "Ground Level Construction",
+                        content: "Prefabrication, modular techniques, permanent guardrails - most effective approach."
+                    },
+                    {
+                        icon: "🛡️",
+                        title: "Fall Prevention Devices",
+                        content: "Scaffolding, MEWPs, edge protection - prevent falls from occurring."
+                    },
+                    {
+                        icon: "🦺",
+                        title: "Fall Arrest Systems",
+                        content: "Individual fall arrest, safety nets, catch platforms - minimize injury if fall occurs."
+                    }
+                ]
+            },
+            slide6: {
+                title: "Incident Scenarios - Common Training Gaps",
+                points: [
+                    {
+                        icon: "🔍",
+                        title: "CHECK - Equipment Inspection",
+                        content: "67% of incidents involve inadequate pre-use inspections. Daily checks mandatory."
+                    },
+                    {
+                        icon: "🛑",
+                        title: "STOP - Permit Compliance",
+                        content: "45% related to permit non-compliance. Work cessation procedures critical."
+                    },
+                    {
+                        icon: "🚨",
+                        title: "ALERT - Hazard Recognition",
+                        content: "38% involve failure to identify changing hazards. Continuous assessment required."
+                    }
+                ]
+            },
+            slide7: {
+                title: "Emergency Response - 4 Critical Phases",
+                points: [
+                    {
+                        icon: "⚡",
+                        title: "Immediate Response (0-2 Minutes)",
+                        content: "Scene safety, casualty assessment, emergency communications. Critical first actions."
+                    },
+                    {
+                        icon: "🆘",
+                        title: "Rescue Execution (2-15 Minutes)",
+                        content: "15-minute rule to prevent suspension trauma. Trained rescue team essential."
+                    },
+                    {
+                        icon: "🏥",
+                        title: "Medical Response & Post-Incident",
+                        content: "Emergency services, medical treatment, investigation, equipment isolation."
+                    }
+                ]
+            },
+            slide8: {
+                title: "PPE, Competency & Assessment",
+                points: [
+                    {
+                        icon: "🦺",
+                        title: "AS 1891 Compliance",
+                        content: "Full body harnesses, energy absorbing lanyards, 23kN connectors. Proper selection critical."
+                    },
+                    {
+                        icon: "🔍",
+                        title: "Inspection Requirements",
+                        content: "Daily pre-use checks, 6-monthly formal inspections. 67% of incidents involve inspection failures."
+                    },
+                    {
+                        icon: "🎓",
+                        title: "Competency Standards",
+                        content: "Working at Heights certification mandatory, 3-year refresher cycle, incident-triggered training."
+                    }
+                ]
+            }
+        };
+
+        const knowledgeCheckPoints = [
+            {
+                icon: "🎯",
+                title: "Prevention-First Approach",
+                content: "EBTA prioritizes elimination and engineering controls over administrative controls and PPE. Always start with Level 1 (Elimination) in the hierarchy of controls."
+            },
+            {
+                icon: "⏱️",
+                title: "Critical 15-Minute Rule",
+                content: "Maximum time before suspension trauma becomes life-threatening. Trained rescue team and equipment must be readily available for all height work."
+            },
+            {
+                icon: "🔍",
+                title: "Equipment Inspection Priority",
+                content: "67% of incidents involve inadequate pre-use inspections. Daily visual checks and 6-monthly formal inspections are mandatory for all fall protection equipment."
+            },
+            {
+                icon: "📋",
+                title: "Competency Requirements",
+                content: "Working at Heights certification mandatory for all personnel >2m fall risk. 3-year refresher cycle with incident-triggered training when required."
+            },
+            {
+                icon: "🚨",
+                title: "Emergency Response Priorities",
+                content: "Scene safety first, then casualty assessment and emergency communications. Never attempt rescue if it creates additional casualties."
+            },
+            {
+                icon: "⚙️",
+                title: "Risk Management Process",
+                content: "Safety in Design → Package Risk Assessment → Work Pack Risk Assessment → Apply Hierarchy → SWMS → Implementation & Monitoring."
+            }
+        ];
+
+        let currentSlide = null;
+        let animationInterval = null;
+
+        function init() {
+            // Add event listeners to all slide cards
+            document.querySelectorAll('.slide-card').forEach(card => {
+                card.addEventListener('click', handleSlideClick);
+                card.addEventListener('touchstart', handleTouchStart);
+            });
+
+            // Add overlay click listener
+            document.getElementById('popup-overlay').addEventListener('click', closePopup);
+
+            // Start professional animation sequence
+            startAnimationSequence();
+        }
+
+        function handleSlideClick(event) {
+            const slideId = event.currentTarget.id;
+            showSlidePopup(slideId);
+            highlightSlide(slideId);
+        }
+
+        function handleTouchStart(event) {
+            event.preventDefault();
+            const slideId = event.currentTarget.id;
+            showSlidePopup(slideId);
+            highlightSlide(slideId);
+        }
+
+        function highlightSlide(slideId) {
+            // Remove active class from all slide cards
+            document.querySelectorAll('.slide-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Add active class to selected slide
+            document.getElementById(slideId).classList.add('active');
+            currentSlide = slideId;
+        }
+
+        function showSlidePopup(slideId) {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('popup-overlay');
+            const title = document.getElementById('popup-title');
+            const keyPoints = document.getElementById('key-points');
+            const slideData = slideTakeaways[slideId];
+
+            title.textContent = slideData.title;
+            
+            let pointsHtml = '';
+            slideData.points.forEach(point => {
+                pointsHtml += `
+                    <div class="key-point">
+                        <div class="key-point-icon">${point.icon}</div>
+                        <div class="key-point-content">
+                            <h4>${point.title}</h4>
+                            <p>${point.content}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            keyPoints.innerHTML = pointsHtml;
+
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+
+            // Auto-close after 20 seconds for training flow
+            setTimeout(() => {
+                closePopup();
+            }, 20000);
+        }
+
+        function showKnowledgeCheck() {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('popup-overlay');
+            const title = document.getElementById('popup-title');
+            const keyPoints = document.getElementById('key-points');
+
+            title.textContent = "Key Knowledge Reinforcement - Critical Points";
+            
+            let pointsHtml = '';
+            knowledgeCheckPoints.forEach(point => {
+                pointsHtml += `
+                    <div class="key-point">
+                        <div class="key-point-icon">${point.icon}</div>
+                        <div class="key-point-content">
+                            <h4>${point.title}</h4>
+                            <p>${point.content}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            keyPoints.innerHTML = pointsHtml;
+
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+
+            // Auto-close after 30 seconds for knowledge reinforcement
+            setTimeout(() => {
+                closePopup();
+            }, 30000);
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+            
+            // Remove active class from current slide
+            if (currentSlide) {
+                document.getElementById(currentSlide).classList.remove('active');
+                currentSlide = null;
+            }
+        }
+
+        function startAnimationSequence() {
+            let slideIndex = 1;
+            
+            animationInterval = setInterval(() => {
+                // Remove active class from all slide cards
+                document.querySelectorAll('.slide-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                
+                // Add active class to current slide
+                const currentSlideElement = document.getElementById(`slide${slideIndex}`);
+                if (currentSlideElement) {
+                    currentSlideElement.classList.add('active');
+                }
+                
+                slideIndex++;
+                if (slideIndex > 8) {
+                    slideIndex = 1;
+                }
+            }, 3500); // 3.5-second intervals for summary review
+        }
+
+        // Keyboard support for accessibility
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Initialize when page loads
+        window.addEventListener('load', init);
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBTA Working at Heights - Emergency Response & Rescue</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #2d3748 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            cursor: none;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            height: 100vh;
+            gap: 3rem;
+            padding: 3rem;
+        }
+
+        .main-panel {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .sidebar {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.1), rgba(255, 69, 0, 0.05));
+            border-radius: 15px;
+            border: 1px solid rgba(220, 20, 60, 0.2);
+        }
+
+        .main-title {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #DC143C, #FF4500, #FF6347);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #E2E8F0;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .document-ref {
+            font-size: 1.1rem;
+            color: #A0AEC0;
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        #emergency-container {
+            flex: 1;
+            position: relative;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            box-shadow: inset 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .emergency-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 2rem;
+            height: 100%;
+        }
+
+        .emergency-card {
+            background: linear-gradient(135deg, #2D3748, #4A5568);
+            border-radius: 20px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .emergency-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(220, 20, 60, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .emergency-card:hover::before {
+            left: 100%;
+        }
+
+        .emergency-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(220, 20, 60, 0.2);
+            border-color: rgba(220, 20, 60, 0.4);
+            background: linear-gradient(135deg, #3D4852, #5A6578);
+        }
+
+        .emergency-card.active {
+            background: linear-gradient(135deg, #DC143C, #FF4500);
+            color: #1A202C;
+            border-color: #DC143C;
+            box-shadow: 0 16px 48px rgba(220, 20, 60, 0.4);
+            animation: activeGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes activeGlow {
+            0%, 100% { box-shadow: 0 16px 48px rgba(220, 20, 60, 0.4); }
+            50% { box-shadow: 0 20px 60px rgba(220, 20, 60, 0.6); }
+        }
+
+        .emergency-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .emergency-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .emergency-timeframe {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #DC143C;
+        }
+
+        .emergency-description {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            font-weight: 300;
+            line-height: 1.3;
+        }
+
+        .urgency-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(220, 20, 60, 0.2);
+            border: 1px solid rgba(220, 20, 60, 0.4);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            animation: urgentPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes urgentPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .sidebar-title {
+            font-size: 2.2rem;
+            color: #DC143C;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 2px solid rgba(220, 20, 60, 0.3);
+            padding-bottom: 1rem;
+        }
+
+        .critical-info {
+            margin-bottom: 3rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 12px;
+            border-left: 4px solid #DC143C;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.1), rgba(220, 20, 60, 0.05));
+            transform: translateX(8px);
+        }
+
+        .info-icon {
+            font-size: 1.8rem;
+            margin-right: 1.5rem;
+            min-width: 50px;
+            color: #DC143C;
+        }
+
+        .info-content h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #E2E8F0;
+            font-weight: 600;
+        }
+
+        .info-content p {
+            font-size: 1rem;
+            color: #A0AEC0;
+            line-height: 1.5;
+        }
+
+        .trauma-section {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.08), rgba(255, 69, 0, 0.04));
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(220, 20, 60, 0.2);
+        }
+
+        .trauma-title {
+            font-size: 1.4rem;
+            color: #DC143C;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .trauma-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .trauma-list li {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            margin: 0.8rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid #DC143C;
+            font-size: 1rem;
+            color: #E2E8F0;
+            transition: all 0.3s ease;
+        }
+
+        .trauma-list li:hover {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.1), rgba(220, 20, 60, 0.05));
+            transform: translateX(5px);
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1A202C, #2D3748);
+            border: 2px solid #DC143C;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 1000px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .popup-title {
+            font-size: 2.2rem;
+            color: #DC143C;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .popup-timeframe {
+            font-size: 1.4rem;
+            color: #FF4500;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 500;
+            background: rgba(220, 20, 60, 0.1);
+            padding: 1rem;
+            border-radius: 12px;
+            border-left: 4px solid #DC143C;
+        }
+
+        .procedure-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .procedure-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #DC143C;
+        }
+
+        .procedure-section h4 {
+            color: #DC143C;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .procedure-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .procedure-section li {
+            margin: 0.8rem 0;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            font-size: 1rem;
+            border-left: 2px solid rgba(220, 20, 60, 0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #DC143C;
+            font-size: 2.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #FF4500;
+            transform: scale(1.1);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.1rem;
+            color: #718096;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        /* Touch-friendly sizing for immersive projection */
+        @media (min-width: 1920px) {
+            .main-title { font-size: 4rem; }
+            .subtitle { font-size: 2.4rem; }
+            .emergency-card { padding: 2.5rem; }
+            .emergency-icon { font-size: 4rem; }
+            .emergency-title { font-size: 1.6rem; }
+            .sidebar-title { font-size: 2.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-panel">
+            <div class="header">
+                <h1 class="main-title">EMERGENCY RESPONSE & RESCUE</h1>
+                <h2 class="subtitle">EBTA Critical Response Procedures</h2>
+                <p class="document-ref">NEL-STH-NSA-5900-OHS-PRC-0008 Rev 04</p>
+            </div>
+            
+            <div id="emergency-container">
+                <div class="emergency-grid">
+                    <!-- Immediate Response -->
+                    <div class="emergency-card" id="emergency1">
+                        <div class="urgency-indicator">🚨</div>
+                        <div class="emergency-icon">⚡</div>
+                        <div class="emergency-title">Immediate Response</div>
+                        <div class="emergency-timeframe">0-2 Minutes</div>
+                        <div class="emergency-description">Secure scene and assess casualty condition</div>
+                    </div>
+                    
+                    <!-- Rescue Execution -->
+                    <div class="emergency-card" id="emergency2">
+                        <div class="urgency-indicator">⏰</div>
+                        <div class="emergency-icon">🆘</div>
+                        <div class="emergency-title">Rescue Execution</div>
+                        <div class="emergency-timeframe">2-15 Minutes</div>
+                        <div class="emergency-description">Execute rescue to prevent suspension trauma</div>
+                    </div>
+                    
+                    <!-- Medical Response -->
+                    <div class="emergency-card" id="emergency3">
+                        <div class="urgency-indicator">🏥</div>
+                        <div class="emergency-icon">🚑</div>
+                        <div class="emergency-title">Medical Response</div>
+                        <div class="emergency-timeframe">Concurrent</div>
+                        <div class="emergency-description">Emergency services and medical treatment</div>
+                    </div>
+                    
+                    <!-- Post-Incident -->
+                    <div class="emergency-card" id="emergency4">
+                        <div class="urgency-indicator">📋</div>
+                        <div class="emergency-icon">📊</div>
+                        <div class="emergency-title">Post-Incident</div>
+                        <div class="emergency-timeframe">Immediate</div>
+                        <div class="emergency-description">Investigation and equipment isolation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <h3 class="sidebar-title">Critical Information</h3>
+            
+            <div class="critical-info">
+                <div class="info-item">
+                    <div class="info-icon">⏱️</div>
+                    <div class="info-content">
+                        <h4>15-Minute Rule</h4>
+                        <p>Maximum time before suspension trauma becomes life-threatening</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">📞</div>
+                    <div class="info-content">
+                        <h4>Emergency Contacts</h4>
+                        <p>000, Site Emergency, EBTA Safety, WorkSafe Victoria</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">🎯</div>
+                    <div class="info-content">
+                        <h4>Rescue Equipment</h4>
+                        <p>Must be readily available and regularly inspected</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">👥</div>
+                    <div class="info-content">
+                        <h4>Trained Personnel</h4>
+                        <p>Competent rescue team identified and available on site</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">🚫</div>
+                    <div class="info-content">
+                        <h4>Work Cessation</h4>
+                        <p>All height work stops until investigation complete</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trauma-section">
+                <div class="trauma-title">Suspension Trauma Signs</div>
+                <ul class="trauma-list">
+                    <li>Nausea and dizziness within 5-10 minutes</li>
+                    <li>Increased heart rate and breathing difficulty</li>
+                    <li>Pallor and sweating from blood pooling</li>
+                    <li>Loss of consciousness after 15-20 minutes</li>
+                    <li>Potential cardiac arrest if not rescued promptly</li>
+                    <li>Post-rescue collapse syndrome risk</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popup-overlay"></div>
+    <div class="popup" id="popup">
+        <button class="close-btn" onclick="closePopup()">&times;</button>
+        <div class="popup-title" id="popup-title"></div>
+        <div class="popup-timeframe" id="popup-timeframe"></div>
+        <div class="procedure-sections" id="procedure-sections"></div>
+    </div>
+
+    <div class="footer">
+        Touch any emergency phase for detailed EBTA response procedures | Internal Staff Refresher Training
+    </div>
+
+    <script>
+        // Enhanced emergency response procedures for EBTA internal training
+        const emergencyProcedures = {
+            emergency1: {
+                title: "Immediate Response (0-2 Minutes)",
+                timeframe: "Critical Actions - First 2 Minutes",
+                sections: {
+                    "Scene Safety & Assessment": [
+                        "Ensure scene is safe before approaching - check for ongoing hazards",
+                        "Do not attempt rescue if it will create additional casualties",
+                        "Assess casualty consciousness and responsiveness from safe distance",
+                        "Identify fall arrest system type and suspension point location",
+                        "Check for obvious injuries, bleeding, or signs of trauma",
+                        "Determine if casualty is conscious and able to assist in rescue"
+                    ],
+                    "Emergency Communications": [
+                        "Call 000 immediately - provide exact location and nature of emergency",
+                        "Contact site emergency coordinator and EBTA safety personnel",
+                        "Notify WorkSafe Victoria of serious incident (immediate notification required)",
+                        "Establish communication with suspended casualty if conscious",
+                        "Request additional rescue personnel and equipment if needed",
+                        "Maintain continuous communication with emergency services"
+                    ],
+                    "Initial Casualty Care": [
+                        "Reassure casualty and maintain verbal contact to assess consciousness",
+                        "Instruct casualty to move legs and flex muscles to maintain circulation",
+                        "Monitor for signs of suspension trauma (nausea, dizziness, pallor)",
+                        "Document time of fall and initial assessment findings",
+                        "Prepare for rapid rescue execution within 15-minute timeframe",
+                        "Do not allow casualty to attempt self-rescue unless specifically trained"
+                    ]
+                }
+            },
+            emergency2: {
+                title: "Rescue Execution (2-15 Minutes)",
+                timeframe: "Maximum 15 Minutes to Prevent Suspension Trauma",
+                sections: {
+                    "Rescue Team Deployment": [
+                        "Deploy trained rescue personnel with appropriate equipment",
+                        "Establish rescue anchor points independent of failed system",
+                        "Use mechanical advantage systems (pulleys, winches) for controlled lowering",
+                        "Ensure rescue team members are properly secured with fall protection",
+                        "Maintain constant communication between rescue team and ground control",
+                        "Have backup rescue plan ready in case primary method fails"
+                    ],
+                    "Rescue Techniques": [
+                        "Lower casualty to ground level using controlled descent devices",
+                        "Use rescue stretcher or evacuation harness for unconscious casualties",
+                        "Support casualty's legs during rescue to maintain circulation",
+                        "Avoid rapid position changes that could cause post-rescue collapse",
+                        "Monitor casualty's condition throughout rescue operation",
+                        "Be prepared to perform CPR if casualty loses consciousness"
+                    ],
+                    "Equipment Requirements": [
+                        "Rescue ropes and hardware rated for rescue loads (minimum 22kN)",
+                        "Mechanical advantage systems (pulleys, winches, rope grabs)",
+                        "Rescue harnesses and evacuation devices",
+                        "First aid equipment and automated external defibrillator (AED)",
+                        "Communication equipment for coordination with emergency services",
+                        "All rescue equipment must be regularly inspected and maintained"
+                    ]
+                }
+            },
+            emergency3: {
+                title: "Medical Response (Concurrent)",
+                timeframe: "Immediate Medical Assessment and Treatment",
+                sections: {
+                    "Primary Assessment": [
+                        "Check airway, breathing, and circulation (ABC) immediately",
+                        "Assess level of consciousness using AVPU scale (Alert, Voice, Pain, Unresponsive)",
+                        "Look for signs of suspension trauma: nausea, dizziness, pallor, rapid pulse",
+                        "Check for obvious injuries from fall impact or equipment failure",
+                        "Monitor vital signs and document changes in condition",
+                        "Be prepared for post-rescue collapse syndrome"
+                    ],
+                    "Suspension Trauma Treatment": [
+                        "Keep casualty in horizontal position after rescue to prevent collapse",
+                        "Do not allow casualty to stand or sit upright immediately",
+                        "Monitor for signs of shock and treat accordingly",
+                        "Provide oxygen if available and casualty is conscious",
+                        "Prepare for potential cardiac arrest and have AED ready",
+                        "Transport to hospital immediately even if casualty appears recovered"
+                    ],
+                    "Emergency Services Coordination": [
+                        "Provide detailed handover to paramedics including time suspended",
+                        "Document all treatment provided and casualty's response",
+                        "Accompany casualty to hospital if required by emergency services",
+                        "Ensure all medical equipment used is properly cleaned and restocked",
+                        "Complete incident medical report for EBTA and WorkSafe Victoria",
+                        "Arrange for critical incident stress debriefing for rescue team"
+                    ]
+                }
+            },
+            emergency4: {
+                title: "Post-Incident Procedures",
+                timeframe: "Immediate Investigation and Equipment Management",
+                sections: {
+                    "Scene Preservation": [
+                        "Isolate and preserve all equipment involved in the incident",
+                        "Take photographs of scene, equipment, and anchor points before disturbance",
+                        "Secure area to prevent contamination of evidence",
+                        "Document weather conditions, lighting, and other environmental factors",
+                        "Identify and preserve any witnesses for investigation interviews",
+                        "Do not remove or alter any equipment until investigation complete"
+                    ],
+                    "Immediate Notifications": [
+                        "Notify WorkSafe Victoria within required timeframes (immediately for serious incidents)",
+                        "Contact EBTA senior management and safety department",
+                        "Inform client and principal contractor of incident details",
+                        "Notify insurance providers and legal representatives as required",
+                        "Prepare preliminary incident report with factual information only",
+                        "Coordinate with emergency services for any ongoing requirements"
+                    ],
+                    "Work Cessation & Investigation": [
+                        "Stop all similar work activities until investigation determines cause",
+                        "Conduct immediate investigation with competent persons",
+                        "Review and update risk assessments and safe work method statements",
+                        "Implement additional controls to prevent recurrence",
+                        "Arrange for independent equipment testing and certification",
+                        "Provide support and counselling for affected workers and rescue team"
+                    ]
+                }
+            }
+        };
+
+        let currentEmergency = null;
+        let animationInterval = null;
+
+        function init() {
+            // Add event listeners to all emergency cards
+            document.querySelectorAll('.emergency-card').forEach(card => {
+                card.addEventListener('click', handleEmergencyClick);
+                card.addEventListener('touchstart', handleTouchStart);
+            });
+
+            // Add overlay click listener
+            document.getElementById('popup-overlay').addEventListener('click', closePopup);
+
+            // Start professional animation sequence
+            startAnimationSequence();
+        }
+
+        function handleEmergencyClick(event) {
+            const emergencyId = event.currentTarget.id;
+            showEmergencyPopup(emergencyId);
+            highlightEmergency(emergencyId);
+        }
+
+        function handleTouchStart(event) {
+            event.preventDefault();
+            const emergencyId = event.currentTarget.id;
+            showEmergencyPopup(emergencyId);
+            highlightEmergency(emergencyId);
+        }
+
+        function highlightEmergency(emergencyId) {
+            // Remove active class from all emergencies
+            document.querySelectorAll('.emergency-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Add active class to selected emergency
+            document.getElementById(emergencyId).classList.add('active');
+            currentEmergency = emergencyId;
+        }
+
+        function showEmergencyPopup(emergencyId) {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('popup-overlay');
+            const title = document.getElementById('popup-title');
+            const timeframe = document.getElementById('popup-timeframe');
+            const sections = document.getElementById('procedure-sections');
+            const emergencyData = emergencyProcedures[emergencyId];
+
+            title.textContent = emergencyData.title;
+            timeframe.textContent = emergencyData.timeframe;
+            
+            let sectionsHtml = '';
+            Object.entries(emergencyData.sections).forEach(([sectionTitle, items]) => {
+                sectionsHtml += `
+                    <div class="procedure-section">
+                        <h4>${sectionTitle}</h4>
+                        <ul>
+                            ${items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+            
+            sections.innerHTML = sectionsHtml;
+
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+
+            // Auto-close after 30 seconds for emergency training
+            setTimeout(() => {
+                closePopup();
+            }, 30000);
+        }
+
+        function closePopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+            
+            // Remove active class from current emergency
+            if (currentEmergency) {
+                document.getElementById(currentEmergency).classList.remove('active');
+                currentEmergency = null;
+            }
+        }
+
+        function startAnimationSequence() {
+            let emergencyIndex = 1;
+            
+            animationInterval = setInterval(() => {
+                // Remove active class from all emergencies
+                document.querySelectorAll('.emergency-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                
+                // Add active class to current emergency
+                const currentEmergencyElement = document.getElementById(`emergency${emergencyIndex}`);
+                if (currentEmergencyElement) {
+                    currentEmergencyElement.classList.add('active');
+                }
+                
+                emergencyIndex++;
+                if (emergencyIndex > 4) {
+                    emergencyIndex = 1;
+                }
+            }, 4000); // 4-second intervals for emergency procedures
+        }
+
+        // Keyboard support for accessibility
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Initialize when page loads
+        window.addEventListener('load', init);
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', () => {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+            }
+        });
+    </script>
+</body>
+</html>
